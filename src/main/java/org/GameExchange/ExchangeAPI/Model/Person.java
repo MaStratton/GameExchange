@@ -46,7 +46,6 @@ public class Person implements Serializable{
         this.lastName = lastName;
         this.emailAddr = emailAddr;
         this.password = ProtectionController.hash(password);
-        //this.addressId = addressId;
         this.preHashedPasswd = password;
     }
 
@@ -59,7 +58,7 @@ public class Person implements Serializable{
     @Override
     public String toString() {
         return "Person [personId=" + personId + ", firstName=" + firstName + ", lastName=" + lastName + ", emailAddr="
-                + emailAddr + ", password=" + password + ", address=" + address + ", preHashedPasswd=" + preHashedPasswd
+                + emailAddr   + ", address=" + address
                 + "]";
     }
 
