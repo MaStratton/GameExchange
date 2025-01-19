@@ -1,23 +1,26 @@
 DROP TABLE IF EXISTS `VideoGameExchange`.`Cities`;
 CREATE TABLE `VideoGameExchange`.`Cities` (
-  `CityId` INT NOT NULL AUTO_INCREMENT,
-  `CityName` VARCHAR(100) NOT NULL,
+  `cityId` INT NOT NULL AUTO_INCREMENT,
+  `cityName` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`CityId`));
+  
+  INSERT INTO `VideoGameExchange`.`Cities` (cityName) Values
+	("Salt Lake City"), ("West Salem");
   
   DROP TABLE IF EXISTS `VideoGameExchange`.`States`;
   CREATE TABLE `VideoGameExchange`.`States` (
-  `StateId` INT NOT NULL AUTO_INCREMENT,
-  `StateName` VARCHAR(45) NOT NULL,
-  `StateAbbr` VARCHAR(2) NOT NULL,
+  `stateId` INT NOT NULL AUTO_INCREMENT,
+  `stateName` VARCHAR(45) NOT NULL,
+  `stateAbbr` VARCHAR(2) NOT NULL,
   PRIMARY KEY (`StateId`));
   
-  INSERT INTO `VideoGameExchange`.`States` (StateName, StateAbbr) Values 
+  INSERT INTO `VideoGameExchange`.`States` (stateName, stateAbbr) Values 
 	("Alabama", "AL"),("Alaska", "AK"),("Arizona", "AZ"),
     ("Arkansas", "AR"),("California", "CA"),
     ("Colorado", "CA"),("Connecticut", "CT"),
     ("Delaware", "DE"),("District of Colombia", "DC"),
 	("Florida", "FL"),("Georgia", "GA"),("Hawaii", "HI"),
-    ("Idaho", "ID"),("Iowa", "IA"),("Kansas", "KS"),
+    ("Idaho", "ID"),("Illinois", "IL"), ("Indiana", "IN"), ("Iowa", "IA"),("Kansas", "KS"),
     ("Kentucky", "KY"),("Louisiana", "LA"),("Maine", "ME"),
     ("Maryland", "MD"),("Massachusetts", "MA"),("Michigan", "MI"),
     ("Minesota", "MN"),("Mississippi", "MS"),("Missouri", "MO"),
@@ -32,150 +35,164 @@ CREATE TABLE `VideoGameExchange`.`Cities` (
     
 DROP TABLE IF EXISTS `VideoGameExchange`.`Zips`;
 CREATE TABLE `VideoGameExchange`.`Zips` (
-	`ZipId` INT NOT NULL AUTO_INCREMENT,
-    `ZipCode` VARCHAR(5) NOT NULL,
+	`zipId` INT NOT NULL AUTO_INCREMENT,
+    `zipCode` VARCHAR(5) NOT NULL,
     PRIMARY KEY (`ZipId`));
     
+INSERT INTO `VideoGameExchange`.`Zips` (zipCode) VALUES 
+	("84102"), ("54669");
+
 DROP TABLE IF EXISTS `VideoGameExchange`.`Addresses`;
 CREATE TABLE `VideoGameExchange`.`Addresses` (
-  `AddressId` INT NOT NULL AUTO_INCREMENT,
-  `AddressLine1` VARCHAR(45) NOT NULL,
-  `AddressLine2` VARCHAR(45) NULL,
-  `CityId` INT NOT NULL,
-  `StateId` INT NOT NULL,
-  `ZipId` INT NOT NULL,
-  PRIMARY KEY (`AddressId`),
-  INDEX `fk_Addresses_1_idx` (`CityId` ASC) VISIBLE,
-  INDEX `fk_State_idx` (`StateId` ASC) VISIBLE,
+  `addressId` INT NOT NULL AUTO_INCREMENT,
+  `addressLine1` VARCHAR(45) NOT NULL,
+  `addressLine2` VARCHAR(45) NULL,
+  `cityId` INT NOT NULL,
+  `stateId` INT NOT NULL,
+  `zipId` INT NOT NULL,
+  PRIMARY KEY (`addressId`),
   CONSTRAINT `fk_City`
-    FOREIGN KEY (`CityId`)
-    REFERENCES `VideoGameExchange`.`Cities` (`CityId`)
+    FOREIGN KEY (`cityId`)
+    REFERENCES `VideoGameExchange`.`Cities` (`cityId`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_State`
-    FOREIGN KEY (`StateId`)
-    REFERENCES `VideoGameExchange`.`States` (`StateId`)
+    FOREIGN KEY (`stateId`)
+    REFERENCES `VideoGameExchange`.`States` (`stateId`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_zip`
-	FOREIGN KEY (`ZipId`)
-    REFERENCES `VideoGameExchange`.`Zips` (`ZipId`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
-
-DROP TABLE IF EXISTS `VideoGameExchange`.`People`;
-CREATE TABLE `VideoGameExchange`.`People` (
-  `PersonId` INT NOT NULL AUTO_INCREMENT,
-  `FirstName` VARCHAR(45) NOT NULL,
-  `LastName` VARCHAR(45) NULL,
-  `EmailAddr` VARCHAR(64) NOT NULL,
-  `Password` VARCHAR(128) NOT NULL,
-  `AddressId` INT NOT NULL,
-  PRIMARY KEY (`PersonId`),
-  CONSTRAINT `fk_Address`
-    FOREIGN KEY (`AddressId`)
-    REFERENCES `VideoGameExchange`.`Addresses` (`AddressId`)
+	FOREIGN KEY (`zipId`)
+    REFERENCES `VideoGameExchange`.`Zips` (`zipId`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
     
+INSERT INTO `VideoGameExchange`.`Addresses` (addressLine1, addressLine2, cityId, stateId, zipId) VALUES
+	("343 South, 500 East", "Apt 217", 1, 45, 1),
+    ("W3897 Hidden River Rd", NULL, 2, 50, 2);
+
+DROP TABLE IF EXISTS `VideoGameExchange`.`People`;
+CREATE TABLE `VideoGameExchange`.`People` (
+  `personId` INT NOT NULL AUTO_INCREMENT,
+  `firstName` VARCHAR(45) NOT NULL,
+  `lastName` VARCHAR(45) NULL,
+  `emailAddr` VARCHAR(64) NOT NULL,
+  `password` VARCHAR(128) NOT NULL,
+  `addressId` INT NOT NULL,
+  PRIMARY KEY (`personId`),
+  CONSTRAINT `fk_Address`
+    FOREIGN KEY (`addressId`)
+    REFERENCES `VideoGameExchange`.`Addresses` (`addressId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+    
+INSERT INTO `VideoGameExchange`.`People` (firstName, lastName, emailAddr, `password`, addressId) VALUES 
+	("Matthew", "Stratton", "test@email.com", "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86", 2),
+    ("David", "Stratton", "dev@example.com", "2e35c34967ac9e320c5b8516ea58d7ff9954c0b1c6495d8db610fd34f4df53e6f3648029f89d5e06986386616cf4693431c7d73b89d998f15d7a690ae384fd54", 1);
+	
 DROP TABLE IF EXISTS `VideoGameExchange`.`GameConditions`;
 CREATE TABLE `VideoGameExchange`.`GameConditions` (
-  `ConditionId` INT NOT NULL AUTO_INCREMENT,
-  `ConditionLabel` VARCHAR(4) NOT NULL,
-  PRIMARY KEY (`ConditionId`));
+  `conditionId` INT NOT NULL AUTO_INCREMENT,
+  `conditionLabel` VARCHAR(4) NOT NULL,
+  PRIMARY KEY (`conditionId`));
   
-INSERT INTO `VideoGameExchange`.`GameConditions` (ConditionLabel) Values 
+INSERT INTO `VideoGameExchange`.`GameConditions` (conditionLabel) Values 
 	("Poor"), ("fair"), ("Good"), ("Mint");
 
 DROP TABLE IF EXISTS `VideoGameExchange`.`Systems`;
 CREATE TABLE `VideoGameExchange`.`Systems` (
-  `SystemId` INT NOT NULL AUTO_INCREMENT,
-  `SystemName` VARCHAR(45) NOT NULL,
+  `systemId` INT NOT NULL AUTO_INCREMENT,
+  `systemName` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`SystemId`));
   
-INSERT INTO `VideoGameExchange`.`Systems` (SystemName) VALUES 
+INSERT INTO `VideoGameExchange`.`Systems` (systemName) VALUES 
 	("Windows"), ("PlayStation"), ("PlayStation 2"), ("PlayStation 3"),
     ("PlayStation 4"), ("PlayStation 5"), ("XBox"), ("XBox 360"), ("XBox One"),
     ("NES"), ("WII"), ("SNES"), ("N64"), ("GameCube"), ("WII U"), ("Switch");
     
 DROP TABLE IF EXISTS `VideoGameExchange`.`Publishers`;
 CREATE TABLE `VideoGameExchange`.`Publishers` (
-  `PublisherId` INT NOT NULL AUTO_INCREMENT,
-  `PublisherName` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`PublisherId`));
+  `publisherId` INT NOT NULL AUTO_INCREMENT,
+  `publisherName` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`publisherId`));
+  
+INSERT INTO `VideoGameExchange`.`Publishers` (publisherName) VALUES
+	("Blizzard"), ("Nintendo"), ("Sony");
 
 DROP TABLE IF EXISTS `VideoGameExchange`.`Games`;
 CREATE TABLE `VideoGameExchange`.`Games` (
-  `GameID` INT NOT NULL AUTO_INCREMENT,
-  `GameTitle` VARCHAR(100) NOT NULL,
-  `PublisherId` INT NOT NULL,
-  `PublicationYear` VARCHAR(4) NOT NULL,
-  PRIMARY KEY (`GameID`),
-  INDEX `fk_Publisher_idx` (`PublisherId` ASC) VISIBLE,
+  `gameID` INT NOT NULL AUTO_INCREMENT,
+  `gameTitle` VARCHAR(100) NOT NULL,
+  `publisherId` INT NOT NULL,
+  `publicationYear` VARCHAR(4) NOT NULL,
+  PRIMARY KEY (`gameID`),
   CONSTRAINT `fk_Publisher`
-    FOREIGN KEY (`PublisherId`)
-    REFERENCES `VideoGameExchange`.`Publishers` (`PublisherId`)
+    FOREIGN KEY (`publisherId`)
+    REFERENCES `VideoGameExchange`.`Publishers` (`publisherId`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+    
+INSERT INTO `VideoGameExchange`.`Games` (gameTitle, publisherId, publicationYear) VALUES 
+	("Diablo", 1, "1996"), ("Diablo 2", 1, "2000"), ("Jak and Daxter", 3, "2001");
 
 DROP TABLE IF EXISTS `VideoGameExchange`.`Conditions`;
 CREATE TABLE `VideoGameExchange`.`Conditions` (
-  `ConditionId`  TINYINT NOT NULL AUTO_INCREMENT,
-  `ConditionName` VARCHAR(4) NOT NULL,
+  `conditionId`  TINYINT NOT NULL AUTO_INCREMENT,
+  `conditionName` VARCHAR(4) NOT NULL,
   PRIMARY KEY (`ConditionId`));
 
-INSERT INTO `VideoGameExchange`.`Conditions` (ConditionName) VALUES 
+INSERT INTO `VideoGameExchange`.`Conditions` (conditionName) VALUES 
 	("Mint"), ("Good"), ("Fair"), ("Poor");
     
 DROP TABLE IF EXISTS `VideoGameExchange`.`OfferRecords`;
 CREATE TABLE `VideoGameExchange`.`OfferRecords` (
-  `OfferRecordId` INT NOT NULL AUTO_INCREMENT,
-  `OfferStatus` VARCHAR(10) NOT NULL,
-  `OfferCreationTime` TIMESTAMP NOT NULL,
-  PRIMARY KEY (`OfferRecordId`));
+  `offerRecordId` INT NOT NULL AUTO_INCREMENT,
+  `offerStatus` VARCHAR(10) NOT NULL,
+  `offerCreationTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`offerRecordId`));
 
 DROP TABLE IF EXISTS `VideoGameExchange`.`GameOwnerRecords`;     
 CREATE TABLE `VideoGameExchange`.`GameOwnerRecords` (
-  `GameOwnerRecordId` INT NOT NULL AUTO_INCREMENT,
-  `PersonId` INT NOT NULL,
-  `GameId` INT NOT NULL,
-  `SystemId` INT NOT NULL,
-  `ConditionId` TINYINT NOT NULL,
-  `IsInOffer` BOOLEAN NOT NULL,
-  `OfferRecordId` INT,
-  `OfferSenderId` INT,
-  PRIMARY KEY (`GameOwnerRecordId`),
-  INDEX `fk_Owner_idx` (`PersonId` ASC) VISIBLE,
-  INDEX `fk_Game_idx` (`GameId` ASC) VISIBLE,
-  INDEX `fk_System_idx` (`SystemId` ASC) VISIBLE,
-  INDEX `fk_Condtition_idx` (`ConditionId` ASC) VISIBLE,
+  `gameOwnerRecordId` INT NOT NULL AUTO_INCREMENT,
+  `ownerId` INT NOT NULL, 
+  `gameId` INT NOT NULL,
+  `systemId` INT NOT NULL,
+  `conditionId` TINYINT NOT NULL,
+  `isInOffer` BOOLEAN NOT NULL DEFAULT 0,
+  `offerRecordId` INT,
+  `offerSenderId` INT,
+  PRIMARY KEY (`gameOwnerRecordId`),
   CONSTRAINT `fk_Owner`
-    FOREIGN KEY (`PersonId`)
-    REFERENCES `VideoGameExchange`.`People` (`PersonId`)
+    FOREIGN KEY (`ownerId`)
+    REFERENCES `VideoGameExchange`.`People` (`personId`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Game`
-    FOREIGN KEY (`GameId`)
-    REFERENCES `VideoGameExchange`.`Games` (`GameID`)
+    FOREIGN KEY (`gameId`)
+    REFERENCES `VideoGameExchange`.`Games` (`gameID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_System`
-    FOREIGN KEY (`SystemId`)
-    REFERENCES `VideoGameExchange`.`Systems` (`SystemId`)
+    FOREIGN KEY (`systemId`)
+    REFERENCES `VideoGameExchange`.`Systems` (`systemId`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Condtition`
-    FOREIGN KEY (`ConditionId`)
-    REFERENCES `VideoGameExchange`.`Conditions` (`ConditionId`)
+    FOREIGN KEY (`conditionId`)
+    REFERENCES `VideoGameExchange`.`Conditions` (`conditionId`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_OfferRecordId`
-	FOREIGN KEY (`OfferRecordId`)
-    REFERENCES `VideoGameExchange`.`OfferRecords` (`OfferRecordId`)
+	FOREIGN KEY (`offerRecordId`)
+    REFERENCES `VideoGameExchange`.`OfferRecords` (`offerRecordId`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_OfferSneder`
-	FOREIGN KEY (`OfferSenderId`)
-    REFERENCES `VideoGameExchange`.`People` (`PersonId`)
+	FOREIGN KEY (`offerSenderId`)
+    REFERENCES `VideoGameExchange`.`People` (`personId`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+INSERT INTO `VideoGameExchange`.`GameOwnerRecords` (ownerId, gameId, systemId, conditionId) VALUES 
+	(2, 1, 1, 2), (2, 2, 1, 2), (1, 3, 3, 1); 
+    
+
