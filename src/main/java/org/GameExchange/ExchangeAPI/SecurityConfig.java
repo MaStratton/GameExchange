@@ -15,12 +15,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
-//@Order(1)
+@Order(1)
 public class SecurityConfig {
     
 
@@ -28,13 +28,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
-        //httpSecurity.addFilterBefore(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/game").permitAll()
-                .requestMatchers(HttpMethod.POST, "/game").authenticated()
+                .requestMatchers(HttpMethod.POST, "/User/Register").permitAll()
 
                 .anyRequest().authenticated()).httpBasic(Customizer.withDefaults());
                 

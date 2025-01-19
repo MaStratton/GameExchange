@@ -1,4 +1,4 @@
-package org.GameExchange.ExchangeAPI.Controllers;
+package org.GameExchange.ExchangeAPI.Controller;
 
 public class Settings {
     static final String dbURL = "jdbc:mysql://localhost:3306/VideoGameExchange";

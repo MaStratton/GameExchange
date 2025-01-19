@@ -1,6 +1,6 @@
-package org.iamliterallyhim.OSWars;
+package org.GameExchange.ExchangeAPI;
 
-import org.iamliterallyhim.OSWars.Controller.ProtectionController;
+import org.GameExchange.ExchangeAPI.Controller.ProtectionController;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -46,7 +46,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getServletPath().startsWith("/addUser");
+        return request.getServletPath().startsWith("/User/Register");
     }
 }
 
