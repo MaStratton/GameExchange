@@ -3,8 +3,6 @@ package org.GameExchange.ExchangeAPI.Model;
 import org.GameExchange.ExchangeAPI.Controller.ProtectionController;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.io.Serializable;
 
 import jakarta.persistence.Entity;
@@ -45,7 +43,7 @@ public class Person implements Serializable{
 
 
 
-    public Person (String firstName, String lastName, String emailAddr, String password, int addressId){
+    public Person (String firstName, String lastName, String emailAddr, String password, Address address){
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddr = emailAddr;

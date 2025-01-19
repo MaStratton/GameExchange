@@ -1,15 +1,11 @@
 package org.GameExchange.ExchangeAPI.Model;
 
-import org.GameExchange.ExchangeAPI.Controller.ProtectionController;
-import org.springframework.lang.NonNull;
-
 import java.io.Serializable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 
 @Entity(name="States")
 @Table(name="States")

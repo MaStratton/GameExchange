@@ -6,7 +6,6 @@ import org.GameExchange.ExchangeAPI.Model.Person;
 import org.GameExchange.ExchangeAPI.Model.PersonJpaRepository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +27,6 @@ public class UserRestController {
     @RequestMapping(path="/Register", method=RequestMethod.POST)
     public Map<String, String> registerUser(@RequestBody Person person){
         Map<String, String> mapReturn = new HashMap<>();
-
         if(!personJpaRepository.checkUserExist(person.getEmailAddr())){
 
         } else {
