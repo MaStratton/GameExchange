@@ -1,6 +1,7 @@
 package org.GameExchange.ExchangeAPI.Model;
 
 import org.GameExchange.ExchangeAPI.Controller.ProtectionController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 
 import java.io.Serializable;
@@ -16,7 +17,9 @@ import jakarta.persistence.OneToOne;
 
 @Entity(name="Addresses")
 @Table(name="Addresses")
-public class Address {
+public class Address implements Serializable{
+
+    @Autowired
     
     @Id
     @Column(name="addressId")
@@ -40,6 +43,16 @@ public class Address {
     @JoinColumn(name="ZipId")
     Zip zip;
 
+    
+
+    public Address(String addressLine1, String addressLine2, State state, City city, Zip zip) {
+        this.addressLine1 = addressLine1;
+        this.addressLine2 = addressLine2;
+        this.state = state;
+        this.city = city;
+        this.zip = zip;
+    }
+
     public Address(){}
 
     @Override
@@ -48,5 +61,29 @@ public class Address {
                 + ", state=" + state + ", city=" + city + ", zip=" + zip + "]";
     }
 
-    
+    public int getAddressId() {
+        return addressId;
+    }
+
+    public String getAddressLine1() {
+        return addressLine1;
+    }
+
+    public String getAddressLine2() {
+        return addressLine2;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public Zip getZip() {
+        return zip;
+    }
+
+
 }

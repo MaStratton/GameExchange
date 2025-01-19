@@ -1,7 +1,9 @@
 package org.GameExchange.ExchangeAPI.Model;
 
 import org.GameExchange.ExchangeAPI.Controller.ProtectionController;
-import org.springframework.lang.NonNull;
+
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.io.Serializable;
 
@@ -39,31 +41,70 @@ public class Person implements Serializable{
     private Address address;
 
     @Transient
-    private String preHashedPasswd;
+    private int addressId;
+
+
 
     public Person (String firstName, String lastName, String emailAddr, String password, int addressId){
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddr = emailAddr;
         this.password = ProtectionController.hash(password);
-        this.preHashedPasswd = password;
+        this.address = address;
     }
+
+
 
     public Person(){}
-
-    public String getEmailAddr(){
-        return emailAddr;
-    }
 
     @Override
     public String toString() {
         return "Person [personId=" + personId + ", firstName=" + firstName + ", lastName=" + lastName + ", emailAddr="
-                + emailAddr   + ", address=" + address
-                + "]";
+                + emailAddr + ", address=" + address + "]";
+        }
+
+        public void setAddress(Address address){
+            this.address = address;
+        }
+
+
+    public String getPersonId() {
+        return personId;
     }
 
 
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+
+
+    public String getLastName() {
+        return lastName;
+    }
+
+
+
+    public String getEmailAddr() {
+        return emailAddr;
+    }
+
+
+
+    public String getPassword() {
+        return password;
+    }
+
+
+
+    public Address getAddress() {
+        return address;
+    }
     
+    public int getAddressId(){
+        return addressId;
+    }
+
     
 }

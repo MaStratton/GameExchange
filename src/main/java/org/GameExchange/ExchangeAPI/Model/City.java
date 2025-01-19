@@ -13,7 +13,7 @@ import jakarta.persistence.ManyToOne;
 
 @Entity(name="Cities")
 @Table(name="Cities")
-public class City {
+public class City implements Serializable{
 
     @Id
     @Column(name="cityId")
@@ -29,6 +29,16 @@ public class City {
     @Override
     public String toString() {
         return "City [cityId=" + cityId + ", cityName=" + cityName + "]";
+    }
+
+
+    public int getCityId() {
+        return cityId;
+    }
+
+
+    public String getCityName() {
+        return cityName;
     };
 
     

@@ -13,7 +13,7 @@ import jakarta.persistence.ManyToOne;
 
 @Entity(name="States")
 @Table(name="States")
-public class State {
+public class State implements Serializable{
 
     @Id
     @Column(name="StateId")
@@ -41,6 +41,18 @@ public class State {
     @Override
     public String toString() {
         return "State [stateId=" + stateId + ", stateName=" + stateName + ", stateAbbr=" + stateAbbr + "]";
+    }
+
+    public int getStateId() {
+        return stateId;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public String getStateAbbr() {
+        return stateAbbr;
     }
 
     

@@ -24,5 +24,14 @@ public class Zip implements Serializable{
     }
 
     public Zip(){}
+
+    public int getZipId() {
+        return zipId;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+    
     
 }

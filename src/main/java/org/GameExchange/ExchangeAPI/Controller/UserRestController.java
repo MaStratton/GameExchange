@@ -1,5 +1,7 @@
 package org.GameExchange.ExchangeAPI.Controller;
 
+import org.GameExchange.ExchangeAPI.Model.Address;
+import org.GameExchange.ExchangeAPI.Model.AddressJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Person;
 import org.GameExchange.ExchangeAPI.Model.PersonJpaRepository;
 
@@ -16,21 +18,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/User")
 public class UserRestController {
+
     @Autowired
-    private PersonJpaRepository jpaRepository;
+    private AddressJpaRepository addressJpaRepository;
+
+    @Autowired
+    private PersonJpaRepository personJpaRepository;
 
     @RequestMapping(path="/Register", method=RequestMethod.POST)
     public Map<String, String> registerUser(@RequestBody Person person){
-        if (!jpaRepository.checkUserExist(person.getEmailAddr())){
-            System.out.println("Does Not exist");
-            List<Person> people = jpaRepository.findAll();
-            for (Person human: people){
-                System.out.println(human.toString());
-            }
-        }
         Map<String, String> mapReturn = new HashMap<>();
 
+        if(!personJpaRepository.checkUserExist(person.getEmailAddr())){
+
+        } else {
+            mapReturn.put("Messege", "Email already used");
+        }
         return mapReturn;
+
+    }
+
+    @RequestMapping(path="/AddAddress", method=RequestMethod.POST)
+    public Address addAddress(@RequestBody Address address){
+        //addressJpaRepository.save(address);
+        System.out.println(address);
+        //System.out.println(addressJpaRepository.findById(1).get());
+        return addressJpaRepository.findById(1).get();
+
     }
     
 }

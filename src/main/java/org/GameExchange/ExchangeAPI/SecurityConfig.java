@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/game").permitAll()
                 .requestMatchers(HttpMethod.POST, "/User/Register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/User/AddAddress").permitAll()
 
                 .anyRequest().authenticated()).httpBasic(Customizer.withDefaults());
                 
