@@ -19,7 +19,7 @@ public class Person implements Serializable{
 
     @Id
     @Column(name="personId")
-    private String personId;
+    private int personId;
 
 
     @Column(name="firstName", nullable=false)
@@ -66,7 +66,7 @@ public class Person implements Serializable{
         }
 
 
-    public String getPersonId() {
+    public int getPersonId() {
         return personId;
     }
 

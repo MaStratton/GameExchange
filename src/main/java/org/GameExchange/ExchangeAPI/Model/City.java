@@ -22,6 +22,10 @@ public class City implements Serializable{
 
     public City(){}
 
+    public City(String cityName){
+        this.cityName = cityName;
+    }
+
 
     @Override
     public String toString() {

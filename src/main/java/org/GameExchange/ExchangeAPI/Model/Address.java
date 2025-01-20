@@ -36,7 +36,7 @@ public class Address implements Serializable{
     City city;
 
     @ManyToOne
-    @JoinColumn(name="ZipId")
+    @JoinColumn(name="zipId")
     Zip zip;
 
     

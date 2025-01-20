@@ -32,6 +32,11 @@ public class Zip implements Serializable{
     public String getZipCode() {
         return zipCode;
     }
+
+    @Override
+    public String toString() {
+        return "Zip [zipId=" + zipId + ", zipCode=" + zipCode + "]";
+    }
     
     
 }
