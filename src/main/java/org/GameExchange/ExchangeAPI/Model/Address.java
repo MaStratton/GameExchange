@@ -24,19 +24,19 @@ public class Address implements Serializable{
     @Column(name="addressLine1", nullable=false)
     String addressLine1;
 
-    @Column(name="addressLine2")
+    @Column(name="addressLine2", nullable=false)
     String addressLine2;
 
     @ManyToOne
-    @JoinColumn(name="stateId")
+    @JoinColumn(name="stateId", nullable=false)
     State state;
 
     @ManyToOne 
-    @JoinColumn(name="cityId")
+    @JoinColumn(name="cityId", nullable=false)
     City city;
 
     @ManyToOne
-    @JoinColumn(name="zipId")
+    @JoinColumn(name="zipId", nullable=false)
     Zip zip;
 
     

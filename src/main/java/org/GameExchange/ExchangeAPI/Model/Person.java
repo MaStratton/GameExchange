@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+//import jakarta.persistence.Transient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -38,8 +38,8 @@ public class Person implements Serializable{
     @JoinColumn(name="addressId")
     private Address address;
 
-    @Transient
-    private int addressId;
+    // @Transient
+    // private int addressId;
 
 
 
@@ -99,10 +99,5 @@ public class Person implements Serializable{
     public Address getAddress() {
         return address;
     }
-    
-    public int getAddressId(){
-        return addressId;
-    }
-
     
 }
