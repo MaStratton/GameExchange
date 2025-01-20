@@ -44,11 +44,9 @@ public class UserRestController {
 
     @RequestMapping(path="/Register", method=RequestMethod.POST)
     public Map<String, String> registerUser(@RequestBody Map<String,String> input){
-        System.out.println(input);
 
         do{
             String[] userInfo = {input.get("firstName"), input.get("lastName"), input.get("emailAddr"), input.get("password")};
-
             boolean containsNullOrEmpty = false;
             for (int i = 0; i < userInfo.length; i++){
                 if ((userInfo[i] == null || userInfo[i].equals(""))&& i != 1){
@@ -82,8 +80,7 @@ public class UserRestController {
             }
 
             try {
-                System.out.println(userInfo[3]);
-                Person person = new Person(userInfo[0], userInfo[1], userInfo[2], ProtectionController.hash(userInfo[3]), address);
+                Person person = new Person(userInfo[0], userInfo[1], userInfo[2], userInfo[3], address);
                 personJpaRepository.save(person);
                 mapMessage.put("Succes", "User Successfully added");
             } catch (Exception e){
@@ -97,8 +94,6 @@ public class UserRestController {
         Map<String, String> mapReturn = new HashMap<String, String>();
         mapReturn.putAll(mapMessage);
         mapMessage.clear();
-
-        System.out.println(mapReturn);
         return mapReturn;
     }
     
@@ -130,7 +125,6 @@ public class UserRestController {
     public Address addAddressRecord(String[] addressInfo){
         for (int i = 0; i < addressInfo.length; i++){
             if (i != 1 && addressInfo[i] == null){
-                System.out.println(i + " " + addressInfo[i]);
                 mapMessage.put("MissingAddressInfoError", "Could Not Create New Recored: Missing Parts");
                 return null;
             }

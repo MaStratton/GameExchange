@@ -10,5 +10,11 @@ public interface PersonJpaRepository extends JpaRepository<Person, Integer>{
 
     @Query("SELECT CASE WHEN COUNT(P) > 0 THEN TRUE ELSE FALSE END FROM People P WHERE P.emailAddr = :emailAddr")
     boolean checkUserExist(@Param("emailAddr") String emailAddr);
+
+    @Query("SELECT CASE WHEN COUNT(P) > 0 THEN TRUE ELSE FALSE END FROM People P WHERE P.emailAddr = :emailAddr AND P.password = :password")
+    boolean checkCreds(@Param("emailAddr") String emailAddr, @Param("password") String password);
+
+    @Query("SELECT P.personId FROM People P WHERE P.emailAddr = :emailAddr AND P.password = :password")
+    int getPersonId(@Param("emailAddr") String emailAddr, @Param("password") String password);
     
 }
