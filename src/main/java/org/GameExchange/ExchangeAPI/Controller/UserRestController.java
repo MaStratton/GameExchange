@@ -42,7 +42,7 @@ public class UserRestController {
     @Autowired
     private ZipJpaRepository zipJpaRepository;
 
-    @RequestMapping(path="/Add/Register", method=RequestMethod.POST)
+    @RequestMapping(path="/Register", method=RequestMethod.POST)
     public Map<String, String> registerUser(@RequestBody Map<String,String> input){
         System.out.println(input);
 
