@@ -7,9 +7,13 @@ import java.util.Map;
 import org.GameExchange.ExchangeAPI.Model.Condition;
 import org.GameExchange.ExchangeAPI.Model.GameJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.GameOwnerRecord;
+import org.GameExchange.ExchangeAPI.Model.GameSystem;
+import org.GameExchange.ExchangeAPI.Model.GameSystemJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.PersonJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.PublisherJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Condition.ConditionName;
+import org.GameExchange.ExchangeAPI.Model.Game;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,6 +31,9 @@ public class GameRestController extends ApplicationRestController{
 
     @Autowired 
     private PublisherJpaRepository publisherJpaRepository;
+
+    @Autowired
+    private GameSystemJpaRepository gameSystemJpaRepository;
     
     @RequestMapping(path="", method=RequestMethod.POST)
     public Map<String, String> addGameToOwner(@RequestBody Map<String, String> input,@RequestHeader("Authorization") String authorization){
@@ -35,12 +42,29 @@ public class GameRestController extends ApplicationRestController{
         userInfo[1] = input.get("system");
         userInfo[2] = input.get("condition");
         
+        Game game;
+        GameSystem gameSystem;
+        Condition condition;
+        
         String[] creds = decriptCreds(authorization);
 
         for (int i = 0; i < userInfo.length; i++){
             if (userInfo[i] == null || userInfo[i].isBlank()){
-                
+                mapMessage.put("MissingGameInfo", "Missing Important Game Information");
+                return getReturnMap();
             }
+        }
+
+        try {
+            game = gameJpaRepository.findByTitle(userInfo[0]).get(0);
+        } catch (IndexOutOfBoundsException e){
+            mapMessage.put("GameDoesNotExist", "No Game Exists by That Title, Please Add To Records");
+        }
+
+        try {
+            gameSystem = gameSystemJpaRepository.findByName(userInfo[1]).get(0);
+        } catch (IndexOutOfBoundsException e){
+            mapMessage.put("SystemDoesNotExist", "No System Exists By That Name, Please Add To Records");
         }
         
         try{

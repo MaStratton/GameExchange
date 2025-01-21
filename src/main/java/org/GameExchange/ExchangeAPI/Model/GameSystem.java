@@ -5,26 +5,26 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-@Entity(name="Systems")
-@Table(name="Systems")
-public class System {
+@Entity(name="GameSystems")
+@Table(name="GameSystems")
+public class GameSystem {
 
     @Id
-    @Column(name="systemId")
-    private int systemId;
+    @Column(name="gameSystemId")
+    private int gameSystemId;
 
     @Column(name="systemName", nullable=false)
     private String systemName;
 
-    public System(int systemId, String systemName) {
-        this.systemId = systemId;
+    public GameSystem(int gameSystemId, String systemName) {
+        this.gameSystemId = gameSystemId;
         this.systemName = systemName;
     }
 
-    public System() {}
+    public GameSystem() {}
 
-    public int getSystemId() {
-        return systemId;
+    public int getGameSystemId() {
+        return gameSystemId;
     }
 
     public String getSystemName() {
