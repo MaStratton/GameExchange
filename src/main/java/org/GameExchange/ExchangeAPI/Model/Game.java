@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-@Entity(name="Gmaes")
+@Entity(name="Games")
 @Table(name="Games")
 public class Game {
 
@@ -14,14 +14,14 @@ public class Game {
     private int gameId;
 
     @Column(name="gameTitle", nullable=false)
-    private String gameTitile;
+    private String gameTitle;
 
     @Column(name="publicationYear", nullable=false)
-    private String publicationYar;
+    private String publicationYear;
 
-    public Game(String gameTitile, String publicationYar) {
-        this.gameTitile = gameTitile;
-        this.publicationYar = publicationYar;
+    public Game(String gameTitile, String publicationYear) {
+        this.gameTitle = gameTitile;
+        this.publicationYear = publicationYear;
     }
 
     public Game() {}
@@ -31,11 +31,11 @@ public class Game {
     }
 
     public String getGameTitile() {
-        return gameTitile;
+        return gameTitle;
     }
 
-    public String getPublicationYar() {
-        return publicationYar;
+    public String getPublicationYear() {
+        return publicationYear;
     }
 
 }
