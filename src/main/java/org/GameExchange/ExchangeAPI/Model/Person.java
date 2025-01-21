@@ -25,7 +25,7 @@ public class Person implements Serializable{
     @Column(name="firstName", nullable=false)
     private String firstName;
 
-    @Column(name="lastName", nullable=false)
+    @Column(name="lastName", nullable=true)
     private String lastName;
 
     @Column(name="emailAddr", nullable=false)

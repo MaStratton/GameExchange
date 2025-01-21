@@ -24,7 +24,7 @@ public class Address implements Serializable{
     @Column(name="addressLine1", nullable=false)
     String addressLine1;
 
-    @Column(name="addressLine2", nullable=false)
+    @Column(name="addressLine2", nullable=true)
     String addressLine2;
 
     @ManyToOne

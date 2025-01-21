@@ -5,13 +5,11 @@ import org.GameExchange.ExchangeAPI.Model.AddressJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.City;
 import org.GameExchange.ExchangeAPI.Model.CityJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Person;
-import org.GameExchange.ExchangeAPI.Model.PersonJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.State;
 import org.GameExchange.ExchangeAPI.Model.StateJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Zip;
 import org.GameExchange.ExchangeAPI.Model.ZipJpaRepository;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -23,15 +21,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/User")
-public class UserRestController {
+public class UserRestController extends ApplicationRestController{
 
-    Map<String, String> mapMessage = new HashMap<String, String>();
 
     @Autowired
     private AddressJpaRepository addressJpaRepository;
-
-    @Autowired
-    private PersonJpaRepository personJpaRepository;
 
     @Autowired
     private CityJpaRepository cityJpaRepository;
@@ -45,56 +39,52 @@ public class UserRestController {
     @RequestMapping(path="/Register", method=RequestMethod.POST)
     public Map<String, String> registerUser(@RequestBody Map<String,String> input){
 
-        do{
-            String[] userInfo = {input.get("firstName"), input.get("lastName"), input.get("emailAddr"), input.get("password")};
-            boolean containsNullOrEmpty = false;
-            for (int i = 0; i < userInfo.length; i++){
-                if ((userInfo[i] == null || userInfo[i].equals(""))&& i != 1){
-                    mapMessage.put("MissingUserInformation", "Missing User Information");    
-                    containsNullOrEmpty = true;
-                    break;
-                }
+        String[] userInfo = new String[4];
+        userInfo[0] = input.get("firstName");
+        userInfo[1] = input.get("lastName");
+        userInfo[2] = input.get("emailAddr");
+        userInfo[3] = input.get("password");
+
+        boolean containsNullOrEmpty = false;
+        for (int i = 0; i < userInfo.length; i++){
+            if ((userInfo[i] == null || userInfo[i].isBlank()) && i != 1){
+                mapMessage.put("MissingUserInformation", "Missing User Information");    
+                containsNullOrEmpty = true;
+                return getReturnMap();
             }
+        }
 
-            if (containsNullOrEmpty)
-                break;
+        if (containsNullOrEmpty)
+            return getReturnMap();
 
-            if (personJpaRepository.checkUserExist(input.get("emailAddr"))){
-                mapMessage.put("UserExists", "User already exists with indicated email");
-                break;
-            }
+        if (personJpaRepository.checkUserExist(input.get("emailAddr"))){
+            mapMessage.put("UserExists", "User already exists with indicated email");
+            return getReturnMap();
+        }
 
-            String[] addressInfo = new String[] {input.get("addressLine1"),
-                input.get("addressLine2"),
-                input.get("cityName"),
-                input.get("stateAbbr"),
-                input.get("zipCode")};
+        String[] addressInfo = new String[] {input.get("addressLine1"),
+            input.get("addressLine2"),
+            input.get("cityName"),
+            input.get("stateAbbr"),
+            input.get("zipCode")};
+        Address address = getAddress(addressInfo);
 
-            Address address = getAddress(addressInfo);
+        if (address == null){
+            address = addAddressRecord(addressInfo);
             if (address == null){
-                address = addAddressRecord(addressInfo);
-                if (address == null){
-                    //mapMessage.put("AddressError", "MissingMissingAddressParts");
-                    break;
-                }
+                //mapMessage.put("AddressError", "MissingMissingAddressParts");
+                return getReturnMap();
             }
+        }
+        try {
+            Person person = new Person(userInfo[0], userInfo[1], userInfo[2], userInfo[3], address);
+            personJpaRepository.save(person);
+            mapMessage.put("Succes", "User Successfully added");
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return getReturnMap();
 
-            try {
-                Person person = new Person(userInfo[0], userInfo[1], userInfo[2], userInfo[3], address);
-                personJpaRepository.save(person);
-                mapMessage.put("Succes", "User Successfully added");
-            } catch (Exception e){
-                System.out.println(e.getMessage());
-
-            }
-
-
-        } while (false);
-
-        Map<String, String> mapReturn = new HashMap<String, String>();
-        mapReturn.putAll(mapMessage);
-        mapMessage.clear();
-        return mapReturn;
     }
     
 
