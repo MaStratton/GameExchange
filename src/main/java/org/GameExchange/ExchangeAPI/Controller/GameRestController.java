@@ -6,8 +6,8 @@ import java.util.Map;
 import org.GameExchange.ExchangeAPI.Model.Condition;
 import org.GameExchange.ExchangeAPI.Model.GameJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.GameOwnerRecord;
-import org.GameExchange.ExchangeAPI.Model.GameSystem;
-import org.GameExchange.ExchangeAPI.Model.GameSystemJpaRepository;
+import org.GameExchange.ExchangeAPI.Model.System;
+import org.GameExchange.ExchangeAPI.Model.SystemJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Person;
 import org.GameExchange.ExchangeAPI.Model.PublisherJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Game;
@@ -31,7 +31,7 @@ public class GameRestController extends ApplicationRestController{
     // private PublisherJpaRepository publisherJpaRepository;
 
     @Autowired
-    private GameSystemJpaRepository gameSystemJpaRepository;
+    private SystemJpaRepository systemJpaRepository;
     
     @RequestMapping( method=RequestMethod.POST)
     public Map<String, String> addGameToOwner(@RequestHeader("Authorization") String authorization, @RequestBody Map<String,String> input){
@@ -54,8 +54,7 @@ public class GameRestController extends ApplicationRestController{
         
         
         Game game = getGame(userInfo[0]);
-        System.out.println("TITS");
-        GameSystem gameSystem = getGameSystem(userInfo[1]);
+        System gameSystem = getGameSystem(userInfo[1]);
         Condition condition = getCondition(userInfo[2]);
         Person owner = new Person();
 
@@ -86,8 +85,8 @@ public class GameRestController extends ApplicationRestController{
         
     }
 
-    public Condition getCondition(String conditionName){
-        switch (conditionName.toLowerCase()) {
+    public Condition getCondition(String conditionLable){
+        switch (conditionLable.toLowerCase()) {
             case "mint":
                 return new Condition(1, "MINT");
             case "good":
@@ -119,9 +118,9 @@ public class GameRestController extends ApplicationRestController{
         }
     }
 
-    public GameSystem getGameSystem(String systemName){
+    public System getGameSystem(String systemName){
         try{
-            GameSystem gameSystem = gameSystemJpaRepository.findByName(systemName).get(0);
+            System gameSystem = systemJpaRepository.findByName(systemName).get(0);
             return gameSystem;
         } catch (IndexOutOfBoundsException e){
             mapMessage.put("GameSystemDoesNotExist", "No System Exists by That Name, Please Add To Records");

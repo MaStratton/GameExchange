@@ -15,15 +15,15 @@ public class Condition implements Serializable{
     @Column(name="conditionId")
     private int conditionId;
 
-    @Column(name="conditionName", nullable=false)
-    private String conditionName;
+    @Column(name="conditionLabel", nullable=false)
+    private String conditionLabel;
 
     public Condition() {
     }
 
-    public Condition(int conditionId, String conditionName) {
+    public Condition(int conditionId, String conditionLabel) {
         this.conditionId = conditionId;
-        this.conditionName = conditionName;
+        this.conditionLabel = conditionLabel;
     }
 
  
@@ -32,8 +32,8 @@ public class Condition implements Serializable{
         return conditionId;
     }
 
-    public String getConditionName() {
-        return conditionName;
+    public String getConditionLabel() {
+        return conditionLabel;
     }
 }
 

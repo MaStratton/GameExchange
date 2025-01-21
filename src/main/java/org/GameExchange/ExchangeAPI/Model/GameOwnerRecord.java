@@ -27,8 +27,8 @@ public class GameOwnerRecord implements Serializable{
     private Game game;
 
     @ManyToOne
-    @JoinColumn(name="gameSystemId", nullable=false)
-    private GameSystem system;
+    @JoinColumn(name="systemId", nullable=false)
+    private System system;
 
     @ManyToOne
     @JoinColumn(name="conditionId", nullable=false)
@@ -47,14 +47,14 @@ public class GameOwnerRecord implements Serializable{
 
     
 
-    public GameOwnerRecord(Person owner, Game game, GameSystem system, Condition condition) {
+    public GameOwnerRecord(Person owner, Game game, System system, Condition condition) {
         this.owner = owner;
         this.game = game;
         this.system = system;
         this.condition = condition;
     }
 
-    public GameOwnerRecord(int gameOwnerRecordId, Person owner, Game game, GameSystem system, Condition condition,
+    public GameOwnerRecord(int gameOwnerRecordId, Person owner, Game game, System system, Condition condition,
             boolean isInOffer, OfferRecord offerRecord, Person offerSender) {
         this.gameOwnerRecordId = gameOwnerRecordId;
         this.owner = owner;
@@ -80,7 +80,7 @@ public class GameOwnerRecord implements Serializable{
         return game;
     }
 
-    public GameSystem getSystem() {
+    public System getSystem() {
         return system;
     }
 

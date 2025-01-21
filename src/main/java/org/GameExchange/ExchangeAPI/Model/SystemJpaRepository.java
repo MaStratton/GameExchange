@@ -8,8 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GameSystemJpaRepository extends JpaRepository<GameSystem, Integer> {
-    @Query("SELECT S FROM GameSystems S WHERE systemName LIKE :systemName")
-    List<GameSystem> findByName(@Param("systemName") String systemName);
+public interface SystemJpaRepository extends JpaRepository<System, Integer> {
+    @Query("SELECT S FROM Systems S WHERE systemName LIKE :systemName")
+    List<System> findByName(@Param("systemName") String systemName);
     
 }
