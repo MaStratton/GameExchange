@@ -16,28 +16,23 @@ public class Condition implements Serializable{
     private int conditionId;
 
     @Column(name="conditionName", nullable=false)
-    private ConditionName conditionName;
+    private String conditionName;
 
     public Condition() {
     }
 
-    public Condition(int conditionId, ConditionName conditionName) {
+    public Condition(int conditionId, String conditionName) {
         this.conditionId = conditionId;
         this.conditionName = conditionName;
     }
 
-    public enum ConditionName {
-        MINT,
-        GOOD,
-        FAIR,
-        POOR
-    }
+ 
 
     public int getConditionId() {
         return conditionId;
     }
 
-    public ConditionName getConditionName() {
+    public String getConditionName() {
         return conditionName;
     }
 }

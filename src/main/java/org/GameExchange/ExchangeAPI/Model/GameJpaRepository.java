@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface GameJpaRepository extends JpaRepository<Game, Integer>{
 
     @Query("SELECT G FROM Games G WHERE G.gameTitle LIKE :gameTitle")
-    List<Game> findByTitle(@Param("gameTilte") String gameTitle);
+    List<Game> findByTitle(@Param("gameTitle") String gameTitle);
     
 }

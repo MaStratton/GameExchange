@@ -67,6 +67,7 @@ public class UserRestController extends ApplicationRestController{
             input.get("cityName"),
             input.get("stateAbbr"),
             input.get("zipCode")};
+            
         Address address = getAddress(addressInfo);
 
         if (address == null){
