@@ -6,7 +6,6 @@ import java.util.Map;
 import org.GameExchange.ExchangeAPI.Model.Condition;
 import org.GameExchange.ExchangeAPI.Model.GameJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.GameOwnerRecord;
-import org.GameExchange.ExchangeAPI.Model.GameOwnerRecordJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.GameSystem;
 import org.GameExchange.ExchangeAPI.Model.GameSystemJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Person;
