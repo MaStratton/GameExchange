@@ -28,7 +28,7 @@ public class GameOwnerRecord implements Serializable{
 
     @ManyToOne
     @JoinColumn(name="systemId", nullable=false)
-    private System system;
+    private GameSystem gameSystem;
 
     @ManyToOne
     @JoinColumn(name="conditionId", nullable=false)
@@ -44,22 +44,21 @@ public class GameOwnerRecord implements Serializable{
     @ManyToOne
     @JoinColumn(name="OfferSenderId")
     private Person offerSender;
-
     
 
-    public GameOwnerRecord(Person owner, Game game, System system, Condition condition) {
+    public GameOwnerRecord(Person owner, Game game, GameSystem system, Condition condition) {
         this.owner = owner;
         this.game = game;
-        this.system = system;
+        this.gameSystem = system;
         this.condition = condition;
     }
 
-    public GameOwnerRecord(int gameOwnerRecordId, Person owner, Game game, System system, Condition condition,
+    public GameOwnerRecord(int gameOwnerRecordId, Person owner, Game game, GameSystem system, Condition condition,
             boolean isInOffer, OfferRecord offerRecord, Person offerSender) {
         this.gameOwnerRecordId = gameOwnerRecordId;
         this.owner = owner;
         this.game = game;
-        this.system = system;
+        this.gameSystem = system;
         this.condition = condition;
         this.isInOffer = isInOffer;
         this.offerRecord = offerRecord;
@@ -80,8 +79,8 @@ public class GameOwnerRecord implements Serializable{
         return game;
     }
 
-    public System getSystem() {
-        return system;
+    public GameSystem getSystem() {
+        return gameSystem;
     }
 
     public Condition getCondition() {
@@ -100,5 +99,58 @@ public class GameOwnerRecord implements Serializable{
         return offerSender;
     }
 
-    
+    public void setGameSystem(GameSystem gameSystem){
+        this.gameSystem = gameSystem;
+    }
+
+    public void setCondition(Condition condition){
+        this.condition = condition;
+    }
+
+
+    @Override
+    public String toString(){
+        String strReturn = String.format("""
+            {
+                Record Id: %d
+                Game: %s
+                System: %s
+                Condition: %s
+                Owner: %s
+            }
+            """
+            , gameOwnerRecordId, 
+                game.getGameTitle(),
+                gameSystem.getSystemName(),
+                condition.getConditionLabel(),
+                owner.getFirstName());
+
+        return strReturn;
+    }
+
+    public String toFullString(){
+        String strReturn = String.format("""
+            {
+                Record Id: %d
+                Game: %s
+                System: %s
+                Condition: %s
+                Owner: %s
+                In Offer: %s
+                Offer Record Id; %d
+                Offer sender: %s
+            }
+            """
+            , gameOwnerRecordId, 
+                game.getGameTitle(),
+                gameSystem.getSystemName(),
+                condition.getConditionLabel(),
+                owner.getFirstName(),
+                isInOffer,
+                offerRecord,
+                offerSender
+                );
+
+        return strReturn;
+    }
 }

@@ -17,6 +17,6 @@ public interface PersonJpaRepository extends JpaRepository<Person, Integer>{
     boolean checkCreds(@Param("emailAddr") String emailAddr, @Param("password") String password);
 
     @Query("SELECT P FROM People P WHERE P.emailAddr = :emailAddr AND P.password = :password")
-    List<Person> getPersonByCreds(@Param("emailAddr") String emailAddr, @Param("password") String password);
+    List<Person> findByCreds(@Param("emailAddr") String emailAddr, @Param("password") String password);
     
 }

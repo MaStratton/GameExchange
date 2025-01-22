@@ -27,5 +27,22 @@ public class OfferRecord {
         ACCEPTED,
         REJECTED
     }
+
+
+    public int getOfferRecordId() {
+        return offerRecordId;
+    }
+
+
+    public OfferStatus getOfferStatus() {
+        return offerStatus;
+    }
+
+
+    public Timestamp getCreationTime() {
+        return creationTime;
+    }
+
+    
     
 }

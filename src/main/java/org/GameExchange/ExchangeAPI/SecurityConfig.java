@@ -33,11 +33,13 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/Game").permitAll()
+                .requestMatchers(HttpMethod.PUT, "*/*").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/Game").authenticated()
+                .requestMatchers(HttpMethod.GET, "/Game").authenticated()
                 .requestMatchers(HttpMethod.POST, "/User/Register").permitAll()
-                .requestMatchers("/User/Add/*").permitAll()
-                .requestMatchers("/Game").authenticated()
-                .requestMatchers("/Game/*").authenticated()
+                .requestMatchers(HttpMethod.POST, "/Game").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/Game/{Id}").authenticated()
+                //.requestMatchers("/error/**").permitAll()
 
                 .anyRequest().authenticated()).httpBasic(Customizer.withDefaults());
                 

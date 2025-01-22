@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class UserRestController extends ApplicationRestController{
     private ZipJpaRepository zipJpaRepository;
 
     @RequestMapping(path="/Register", method=RequestMethod.POST)
-    public Map<String, String> registerUser(@RequestBody Map<String,String> input){
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody Map<String,String> input){
 
         String[] userInfo = new String[4];
         userInfo[0] = input.get("firstName");
@@ -45,21 +46,18 @@ public class UserRestController extends ApplicationRestController{
         userInfo[2] = input.get("emailAddr");
         userInfo[3] = input.get("password");
 
-        boolean containsNullOrEmpty = false;
         for (int i = 0; i < userInfo.length; i++){
             if ((userInfo[i] == null || userInfo[i].isBlank()) && i != 1){
                 mapMessage.put("MissingUserInformation", "Missing User Information");    
-                containsNullOrEmpty = true;
-                return getReturnMap();
+                return ResponseEntity.status(400).body(getReturnMap());
             }
         }
 
-        if (containsNullOrEmpty)
-            return getReturnMap();
+
 
         if (personJpaRepository.checkUserExist(input.get("emailAddr"))){
             mapMessage.put("UserExists", "User already exists with indicated email");
-            return getReturnMap();
+            return ResponseEntity.status(400).body(getReturnMap());
         }
 
         String[] addressInfo = new String[] {input.get("addressLine1"),
@@ -73,18 +71,19 @@ public class UserRestController extends ApplicationRestController{
         if (address == null){
             address = addAddressRecord(addressInfo);
             if (address == null){
-                //mapMessage.put("AddressError", "MissingMissingAddressParts");
-                return getReturnMap();
+                return ResponseEntity.status(400).body(getReturnMap());
             }
         }
         try {
             Person person = new Person(userInfo[0], userInfo[1], userInfo[2], userInfo[3], address);
             personJpaRepository.save(person);
             mapMessage.put("Succes", "User Successfully added");
+            return ResponseEntity.status(201).body(getReturnMap());
         } catch (Exception e){
             System.out.println(e.getMessage());
+            return ResponseEntity.status(500).body(getReturnMap());
         }
-        return getReturnMap();
+        
 
     }
     

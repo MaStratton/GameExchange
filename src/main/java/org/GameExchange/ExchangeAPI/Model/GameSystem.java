@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 
 @Entity(name="Systems")
 @Table(name="Systems")
-public class System {
+public class GameSystem {
 
     @Id
     @Column(name="systemId")
@@ -16,12 +16,12 @@ public class System {
     @Column(name="systemName", nullable=false)
     private String systemName;
 
-    public System(int systemId, String systemName) {
+    public GameSystem(int systemId, String systemName) {
         this.systemId = systemId;
         this.systemName = systemName;
     }
 
-    public System() {}
+    public GameSystem() {}
 
     public int getGameSystemId() {
         return systemId;

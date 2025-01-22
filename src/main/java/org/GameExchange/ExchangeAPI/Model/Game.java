@@ -30,7 +30,7 @@ public class Game {
         return gameId;
     }
 
-    public String getGameTitile() {
+    public String getGameTitle() {
         return gameTitle;
     }
 
