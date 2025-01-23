@@ -1,6 +1,7 @@
 package org.GameExchange.ExchangeAPI.Model;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -107,23 +108,32 @@ public class GameOwnerRecord implements Serializable{
         this.condition = condition;
     }
 
+    public LinkedHashMap<String, String> toMap(){
+        LinkedHashMap<String, String> mapReturn = new LinkedHashMap<String, String>();
+        mapReturn.put("Record Id", String.valueOf(gameOwnerRecordId));
+        mapReturn.put("Title", game.getGameTitle());
+        mapReturn.put("System", gameSystem.getSystemName());
+        mapReturn.put("Owner", String.valueOf(owner.getUri()));
+        return mapReturn;
+    }
+
 
     @Override
     public String toString(){
         String strReturn = String.format("""
             {
-                Record Id: %d
-                Game: %s
-                System: %s
-                Condition: %s
-                Owner: %s
+                "Record Id": "%d"
+                "Game": "%s"
+                "System": "%s"
+                "Condition": "%s"
+                "Owner": %s
             }
             """
             , gameOwnerRecordId, 
                 game.getGameTitle(),
                 gameSystem.getSystemName(),
                 condition.getConditionLabel(),
-                owner.getFirstName());
+                (owner.getFirstName() + " " + owner.getLastName()));
 
         return strReturn;
     }

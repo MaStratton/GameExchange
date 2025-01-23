@@ -18,7 +18,7 @@ public class OfferRecord {
     @Column(name="offerStatus")
     private OfferStatus offerStatus;
 
-    @Column(name="creationTime")
+    @Column(name="offerCreationTime")
     private Timestamp creationTime;
 
 

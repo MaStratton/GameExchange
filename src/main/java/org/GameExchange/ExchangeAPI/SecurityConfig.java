@@ -31,15 +31,16 @@ public class SecurityConfig {
         httpSecurity.addFilterBefore(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/api-docs").permitAll()
                 .requestMatchers(HttpMethod.GET, "/*").permitAll()
-                .requestMatchers(HttpMethod.POST, "/*").permitAll()
+                .requestMatchers(HttpMethod.POST, "*/*").permitAll()
                 .requestMatchers(HttpMethod.PUT, "*/*").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/Game").authenticated()
-                .requestMatchers(HttpMethod.GET, "/Game").authenticated()
                 .requestMatchers(HttpMethod.POST, "/User/Register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/Game").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/Game/{Id}").authenticated()
-                //.requestMatchers("/error/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/Game").authenticated()
+                .requestMatchers(HttpMethod.GET, "/Game").authenticated()
+                .requestMatchers(HttpMethod.GET, "/Game/{id}").authenticated()
+                .requestMatchers("/error/**").permitAll()
 
                 .anyRequest().authenticated()).httpBasic(Customizer.withDefaults());
                 
@@ -61,5 +62,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 }

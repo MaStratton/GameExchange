@@ -41,7 +41,9 @@ public class Person implements Serializable{
     // @Transient
     // private int addressId;
 
-
+    public String getUri(){
+        return "localhost:8080/User/" + personId;
+    }
 
     public Person (String firstName, String lastName, String emailAddr, String password, Address address){
         this.firstName = firstName;
@@ -50,7 +52,6 @@ public class Person implements Serializable{
         this.password = ProtectionController.hash(password);
         this.address = address;
     }
-
 
 
     public Person(){}

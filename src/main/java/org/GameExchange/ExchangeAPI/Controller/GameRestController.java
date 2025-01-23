@@ -1,7 +1,8 @@
 package org.GameExchange.ExchangeAPI.Controller;
 
 import java.util.Base64;
-import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.GameExchange.ExchangeAPI.Model.Condition;
 import org.GameExchange.ExchangeAPI.Model.GameJpaRepository;
@@ -29,14 +30,14 @@ public class GameRestController extends ApplicationRestController{
     @Autowired
     private GameJpaRepository gameJpaRepository;
 
-    // @Autowired 
-    // private PublisherJpaRepository publisherJpaRepository;
+    @Autowired 
+    private PublisherJpaRepository publisherJpaRepository;
 
     @Autowired
     private GameSystemJpaRepository gameSystemJpaRepository;
     
     @RequestMapping(method=RequestMethod.POST)
-    public ResponseEntity<Map<String, String>> addGameToOwner(@RequestHeader("Authorization") String authorization, @RequestBody Map<String,String> input){
+    public ResponseEntity<LinkedHashMap<String, String>> addGameToOwner(@RequestHeader("Authorization") String authorization, @RequestBody LinkedHashMap<String,String> input){
         
         String[] creds = decriptCreds(authorization);
 
@@ -53,9 +54,9 @@ public class GameRestController extends ApplicationRestController{
         }
         
         
-        Game game = getGame(userInfo[0]);
-        GameSystem gameSystem = getGameSystem(userInfo[1]);
-        Condition condition = getCondition(userInfo[2].toLowerCase());
+        Game game = getGameByTitle(userInfo[0]);
+        GameSystem gameSystem = getGameSystemByName(userInfo[1]);
+        Condition condition = getConditionByLabel(userInfo[2].toLowerCase());
         Person owner = new Person();
 
 
@@ -83,10 +84,36 @@ public class GameRestController extends ApplicationRestController{
         }
         
     }
+
+
+    @RequestMapping(path="", method=RequestMethod.GET)
+    public ResponseEntity<LinkedHashMap<Integer, LinkedHashMap<String, String>>> getAvailableGames(){
+        List<GameOwnerRecord> records =  gameOwnerRecordJpaRepository.findAllAvailable();
+        LinkedHashMap<Integer, LinkedHashMap<String, String>> lhmReturn = new LinkedHashMap<Integer, LinkedHashMap<String, String>>();
+        for (int i = 0; i < records.size(); i++){
+            lhmReturn.put(i, records.get(i).toMap());
+        }
+        return ResponseEntity.status(200).body(lhmReturn);
+    }
+
+    @RequestMapping(path="/{id}", method=RequestMethod.GET)
+    public  ResponseEntity<Object> getGameById(@PathVariable int id){
+        GameOwnerRecord record = gameOwnerRecordJpaRepository.findById(id).get();
+
+        if (record == null){
+            mapMessage.put("Game Not Found", "No Game Found by that Id");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+        return ResponseEntity.status(200).body(record.toMap());
+        
+
+
+
+    }
     
     
-    @RequestMapping(path="/{Id}", method=RequestMethod.PUT)
-    public ResponseEntity<Map<String, String>> updateGameOwnerRecord(@PathVariable int Id, @RequestHeader("Authorization") String auth, @RequestBody Map<String, String> input){
+    @RequestMapping(path="/{id}", method=RequestMethod.PUT)
+    public ResponseEntity<LinkedHashMap<String, String>> updateGameOwnerRecord(@PathVariable int id, @RequestHeader("Authorization") String auth, @RequestBody LinkedHashMap<String, String> input){
         String[] creds = decriptCreds(auth);
         String[] userInput = new String[2];
         System.out.println(input);
@@ -100,8 +127,8 @@ public class GameRestController extends ApplicationRestController{
             }
         }
 
-        Condition condition = getCondition(userInput[0].toLowerCase());
-        GameSystem system = getGameSystem(userInput[1]);
+        Condition condition = getConditionByLabel(userInput[0].toLowerCase());
+        GameSystem system = getGameSystemByName(userInput[1]);
 
         if (condition == null || system == null){
             mapMessage.put("RecordsNotFound","Records Not Found. See Error Output");
@@ -111,7 +138,7 @@ public class GameRestController extends ApplicationRestController{
 
         Person owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
 
-        GameOwnerRecord record = getByIdAndOwner(Id, owner.getPersonId());
+        GameOwnerRecord record = getGORByIdAndOwner(id, owner.getPersonId());
         if (record == null){
             return ResponseEntity.status(400).body(getReturnMap());
         }
@@ -133,12 +160,9 @@ public class GameRestController extends ApplicationRestController{
         }
     }
 
-    @RequestMapping(path="", method=RequestMethod.GET)
-    public String getAvailableGames(){
-        return gameOwnerRecordJpaRepository.findAllAvailable().toString();
-    }
 
-    public Condition getCondition(String conditionLable){
+
+    public Condition getConditionByLabel(String conditionLable){
         try {
             switch (conditionLable.toLowerCase()) {
                 case "mint":
@@ -153,22 +177,14 @@ public class GameRestController extends ApplicationRestController{
                     mapMessage.put("ConditionError","Invalid Condition Inputted");
                     return null;
             }
-    } catch (Exception e){
-        mapMessage.put("ConditionError","Invalid Condition Inputted");
-        System.out.println(e.getMessage());
-        return null;
-    }
-    }
-
-    public String[] decriptCreds(String creds){
-        creds = creds.substring(6);
-        creds = new String(Base64.getDecoder().decode(creds));
-        String[] credsReturn = creds.split(":");
-        credsReturn[1] = ProtectionController.hash(credsReturn[1]);
-        return credsReturn;
+        } catch (Exception e){
+            mapMessage.put("ConditionError","Invalid Condition Inputted");
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
-    public Game getGame(String gameTitle){
+    public Game getGameByTitle(String gameTitle){
         try {
             Game game = gameJpaRepository.findByTitle(gameTitle).get(0);
             return game;
@@ -178,7 +194,7 @@ public class GameRestController extends ApplicationRestController{
         }
     }
 
-    public GameSystem getGameSystem(String systemName){
+    public GameSystem getGameSystemByName(String systemName){
         try{
             GameSystem gameSystem = gameSystemJpaRepository.findByName(systemName).get(0);
             return gameSystem;
@@ -188,7 +204,7 @@ public class GameRestController extends ApplicationRestController{
         }
     }
 
-    public GameOwnerRecord getByIdAndOwner(int Id, int ownerId){
+    public GameOwnerRecord getGORByIdAndOwner(int Id, int ownerId){
         try{
             GameOwnerRecord record = gameOwnerRecordJpaRepository.findByGameOwnerRecordIdAndOwnerPersonId(Id, ownerId).get(0);
             return record;
@@ -196,6 +212,14 @@ public class GameRestController extends ApplicationRestController{
             mapMessage.put("GameOwnerRecordNotFound", "No Game Owner Record Exists By That Id for Current User");
             return null;
         }
+    }
+
+    public String[] decriptCreds(String creds){
+        creds = creds.substring(6);
+        creds = new String(Base64.getDecoder().decode(creds));
+        String[] credsReturn = creds.split(":");
+        credsReturn[1] = ProtectionController.hash(credsReturn[1]);
+        return credsReturn;
     }
 
 }

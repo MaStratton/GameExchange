@@ -1,7 +1,6 @@
 package org.GameExchange.ExchangeAPI.Controller;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.GameExchange.ExchangeAPI.Model.GameOwnerRecordJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.PersonJpaRepository;
@@ -16,10 +15,10 @@ public class ApplicationRestController {
         protected GameOwnerRecordJpaRepository gameOwnerRecordJpaRepository;
 
 
-    public Map<String, String> mapMessage = new HashMap<String, String>();
+    public LinkedHashMap<String, String> mapMessage = new LinkedHashMap<String, String>();
 
-    public Map<String, String> getReturnMap(){
-        Map<String, String> mapReturn = new HashMap<String, String>();
+    public LinkedHashMap<String, String> getReturnMap(){
+        LinkedHashMap<String, String> mapReturn = new LinkedHashMap<String, String>();
         mapReturn.putAll(mapMessage);
         mapMessage.clear();
         return mapReturn;
