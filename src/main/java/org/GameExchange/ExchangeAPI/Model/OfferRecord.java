@@ -18,13 +18,14 @@ import jakarta.persistence.Table;
 public class OfferRecord {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="offerRecordId")
     private int offerRecordId;
 
     @Column(name="offerStatus")
     private String offerStatus;
 
-    @Column(name="offerCreationTime")
+    @Column(name="offerCreationTime", insertable=false)
     private Timestamp creationTime;
 
 
