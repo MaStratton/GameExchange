@@ -89,15 +89,6 @@ CREATE TABLE `VideoGameExchange`.`People` (
 INSERT INTO `VideoGameExchange`.`People` (firstName, lastName, emailAddr, `password`, addressId) VALUES 
 	("Matthew", "Stratton", "test@email.com", "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86", 2),
     ("David", "Stratton", "dev@example.com", "2e35c34967ac9e320c5b8516ea58d7ff9954c0b1c6495d8db610fd34f4df53e6f3648029f89d5e06986386616cf4693431c7d73b89d998f15d7a690ae384fd54", 1);
-	
-DROP TABLE IF EXISTS `VideoGameExchange`.`GameConditions`;
-CREATE TABLE `VideoGameExchange`.`GameConditions` (
-  `conditionId` INT NOT NULL AUTO_INCREMENT,
-  `conditionLabel` VARCHAR(4) NOT NULL,
-  PRIMARY KEY (`conditionId`));
-  
-INSERT INTO `VideoGameExchange`.`GameConditions` (conditionLabel) Values 
-	("Poor"), ("fair"), ("Good"), ("Mint");
 
 DROP TABLE IF EXISTS `VideoGameExchange`.`Systems`;
 CREATE TABLE `VideoGameExchange`.`Systems` (
@@ -106,7 +97,7 @@ CREATE TABLE `VideoGameExchange`.`Systems` (
   PRIMARY KEY (`SystemId`));
   
 INSERT INTO `VideoGameExchange`.`Systems` (systemName) VALUES 
-	("Windows"), ("PlayStation"), ("PlayStation 2"), ("PlayStation 3"),
+	("Windows"), ("PlayStatGamion"), ("PlayStation 2"), ("PlayStation 3"),
     ("PlayStation 4"), ("PlayStation 5"), ("XBox"), ("XBox 360"), ("XBox One"),
     ("NES"), ("WII"), ("SNES"), ("N64"), ("GameCube"), ("WII U"), ("Switch");
     
@@ -138,11 +129,11 @@ INSERT INTO `VideoGameExchange`.`Games` (gameTitle, publisherId, publicationYear
 DROP TABLE IF EXISTS `VideoGameExchange`.`Conditions`;
 CREATE TABLE `VideoGameExchange`.`Conditions` (
   `conditionId`  TINYINT NOT NULL AUTO_INCREMENT,
-  `conditionName` VARCHAR(4) NOT NULL,
+  `conditionLabel` VARCHAR(4) NOT NULL,
   PRIMARY KEY (`ConditionId`));
 
-INSERT INTO `VideoGameExchange`.`Conditions` (conditionName) VALUES 
-	("Mint"), ("Good"), ("Fair"), ("Poor");
+INSERT INTO `VideoGameExchange`.`Conditions` (conditionLabel) VALUES 
+	("MINT"), ("GOOD"), ("FAIR"), ("POOR");
     
 DROP TABLE IF EXISTS `VideoGameExchange`.`OfferRecords`;
 CREATE TABLE `VideoGameExchange`.`OfferRecords` (
