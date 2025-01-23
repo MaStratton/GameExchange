@@ -1,6 +1,5 @@
 package org.GameExchange.ExchangeAPI.Model;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class OfferDTO {

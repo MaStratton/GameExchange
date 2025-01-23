@@ -40,7 +40,7 @@ public class UserRestController extends ApplicationRestController{
     private ZipJpaRepository zipJpaRepository;
 
     @RequestMapping(path="/Register", method=RequestMethod.POST)
-    public ResponseEntity<Map<String, String>> registerUser(@RequestBody Map<String,String> input){
+    public ResponseEntity<Object> registerUser(@RequestBody Map<String,String> input){
 
         String[] userInfo = new String[4];
         userInfo[0] = input.get("firstName");

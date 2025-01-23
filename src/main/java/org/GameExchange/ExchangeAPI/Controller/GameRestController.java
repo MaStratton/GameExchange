@@ -32,7 +32,7 @@ public class GameRestController extends ApplicationRestController{
     private GameSystemJpaRepository gameSystemJpaRepository;
     
     @RequestMapping(path="/Records", method=RequestMethod.POST)
-    public ResponseEntity<LinkedHashMap<String, String>> addGameToOwner(@RequestHeader("Authorization") String authorization, @RequestBody LinkedHashMap<String,String> input){
+    public ResponseEntity<Object> addGameToOwner(@RequestHeader("Authorization") String authorization, @RequestBody LinkedHashMap<String,String> input){
         
         String[] creds = decriptCreds(authorization);
 
@@ -101,7 +101,7 @@ public class GameRestController extends ApplicationRestController{
     
     
     @RequestMapping(path="/Records/{id}", method=RequestMethod.PUT)
-    public ResponseEntity<LinkedHashMap<String, String>> updateGameOwnerRecord(@PathVariable int id, @RequestHeader("Authorization") String auth, @RequestBody LinkedHashMap<String, String> input){
+    public ResponseEntity<Object> updateGameOwnerRecord(@PathVariable int id, @RequestHeader("Authorization") String auth, @RequestBody LinkedHashMap<String, String> input){
         String[] creds = decriptCreds(auth);
         String[] userInput = new String[2];
         Person owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);

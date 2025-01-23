@@ -2,8 +2,7 @@ package org.GameExchange.ExchangeAPI.Model;
 
 import java.sql.Timestamp;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
