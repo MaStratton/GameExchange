@@ -9,7 +9,9 @@ import org.GameExchange.ExchangeAPI.Model.State;
 import org.GameExchange.ExchangeAPI.Model.StateJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Zip;
 import org.GameExchange.ExchangeAPI.Model.ZipJpaRepository;
+import org.apache.catalina.connector.Response;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
 @RequestMapping("/User")
@@ -84,6 +87,23 @@ public class UserRestController extends ApplicationRestController{
             return ResponseEntity.status(500).body(getReturnMap());
         }
         
+    }
+
+    @RequestMapping(path="/ChangePass", method=RequestMethod.PATCH)
+    public ResponseEntity<Object> changePassword(@RequestHeader("Authorization") String authorization, @RequestBody LinkedHashMap<String,String> input){
+        String creds[] = decriptCreds(authorization);
+        Person person = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
+
+        if (input.get("password") == null){
+            mapMessage.put("NoPasswordInput", "Please enter a new Password");
+            return ResponseEntity.status(400).body(getReturnMap());
+        } else {
+            person.setPassword(ProtectionController.hash(input.get("password")));
+            personJpaRepository.save(person);
+            mapMessage.put("UpdateSuccessful", "Password Successfully Changed");
+            return ResponseEntity.status(204).body(getReturnMap());
+        }
+    
 
     }
     

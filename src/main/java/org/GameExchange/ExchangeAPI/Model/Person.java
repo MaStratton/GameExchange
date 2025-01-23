@@ -56,6 +56,10 @@ public class Person implements Serializable{
 
     public Person(){}
 
+    public void setPassword(String password){
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "Person [personId=" + personId + ", firstName=" + firstName + ", lastName=" + lastName + ", emailAddr="

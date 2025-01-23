@@ -1,5 +1,6 @@
 package org.GameExchange.ExchangeAPI.Controller;
 
+import java.util.Base64;
 import java.util.LinkedHashMap;
 
 import org.GameExchange.ExchangeAPI.Model.GameOwnerRecordJpaRepository;
@@ -24,4 +25,11 @@ public class ApplicationRestController {
         return mapReturn;
     }
     
+        public String[] decriptCreds(String creds){
+        creds = creds.substring(6);
+        creds = new String(Base64.getDecoder().decode(creds));
+        String[] credsReturn = creds.split(":");
+        credsReturn[1] = ProtectionController.hash(credsReturn[1]);
+        return credsReturn;
+    }
 }

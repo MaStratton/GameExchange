@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/User/Register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/Game").authenticated()
                 .requestMatchers(HttpMethod.GET, "/Game/Records").authenticated()
-                .requestMatchers(HttpMethod.GET, "/Game/Records/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/Game/Records/{id}").authenticated()
                 .requestMatchers(HttpMethod.GET, "/Game").permitAll()
                 .requestMatchers("/error*").permitAll()
                 .anyRequest().authenticated()).httpBasic(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable);

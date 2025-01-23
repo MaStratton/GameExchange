@@ -1,6 +1,5 @@
 package org.GameExchange.ExchangeAPI.Controller;
 
-import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.GameExchange.ExchangeAPI.Model.GameSystem;
 import org.GameExchange.ExchangeAPI.Model.GameSystemJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Person;
 import org.GameExchange.ExchangeAPI.Model.PublisherJpaRepository;
-import org.apache.catalina.connector.Response;
 import org.GameExchange.ExchangeAPI.Model.Game;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,17 +81,6 @@ public class GameRestController extends ApplicationRestController{
         
     }
 
-    @RequestMapping(path="/{id}", method=RequestMethod.GET)
-    public ResponseEntity<Object> findGameById(@PathVariable int id){
-        Game game = gameJpaRepository.findById(id).get();
-        if (game == null){
-            mapMessage.put("RecordNotFound", "No Record Found by that Id");
-            return ResponseEntity.status(404).body(getReturnMap());
-        }
-        return ResponseEntity.status(200).body(game.toMap());
-    }
-
-
     @RequestMapping(path="/Records", method=RequestMethod.GET)
     public ResponseEntity<LinkedHashMap<Integer, LinkedHashMap<String, String>>> getAvailableGames(){
         List<GameOwnerRecord> records =  gameOwnerRecordJpaRepository.findAllAvailable();
@@ -156,7 +143,7 @@ public class GameRestController extends ApplicationRestController{
         try {
             gameOwnerRecordJpaRepository.save(record);
             mapMessage.put("UpdateSuccessful", "Record Update Successfull");
-            return ResponseEntity.status(200).body(getReturnMap());
+            return ResponseEntity.status(204).body(getReturnMap());
 
         } catch (Exception e){
             System.out.println(e.getCause());
@@ -165,6 +152,68 @@ public class GameRestController extends ApplicationRestController{
         }
     }
 
+    @RequestMapping(path="/Records/{id}", method=RequestMethod.PATCH)
+    public ResponseEntity<Object> partialRecordsUpdate(@PathVariable int id, @RequestHeader("Authorization") String auth, @RequestBody LinkedHashMap<String, String> input){
+        String[] creds = decriptCreds(auth);
+
+
+        Person owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
+        GameOwnerRecord record = gameOwnerRecordJpaRepository.findByGameOwnerRecordIdAndOwnerPersonId(id, owner.getPersonId()).get(0);
+        if (record == null){
+            mapMessage.put("RecordNotFound", "No Record Found For That Id");
+            return ResponseEntity.status(400).body(getReturnMap());
+        }
+
+        Condition condition = null;
+        GameSystem gameSystem = null;
+
+        if (input.get("condition") != null){
+            condition = getConditionByLabel(input.get("condition"));
+            if (condition == null){
+                mapMessage.put("RecordsNotFound","Records Not Found. See Error Output");
+                return ResponseEntity.status(400).body(getReturnMap());
+            } else {
+                record.setCondition(condition);
+            }
+        }
+
+        if (input.get("system") != null){
+            gameSystem = getGameSystemByName(input.get("system"));
+            if (gameSystem == null){
+                mapMessage.put("RecordsNotFound","Records Not Found. See Error Output");
+                return ResponseEntity.status(400).body(getReturnMap());
+            } else {
+                record.setGameSystem(gameSystem);
+            }
+        }
+
+        if (condition == null && gameSystem == null){
+            mapMessage.put("NoInputFound","Please Input System or Condition Update");
+            return ResponseEntity.status(400).body(getReturnMap());
+        } 
+        
+
+        try {
+            gameOwnerRecordJpaRepository.save(record);
+            mapMessage.put("UpdateSuccessful", "Record Update Successfull");
+            return ResponseEntity.status(204).body(getReturnMap());
+
+        } catch (Exception e){
+            System.out.println(e.getCause());
+            mapMessage.put("UnexpectedException", "System Has Encountered an Unexpexted Issue");
+            return ResponseEntity.status(500).body(getReturnMap());
+        }
+    }
+
+    @RequestMapping(path="/{id}", method=RequestMethod.GET)
+    public ResponseEntity<Object> findGameById(@PathVariable int id){
+        Game game = gameJpaRepository.findById(id).get();
+        if (game == null){
+            mapMessage.put("RecordNotFound", "No Record Found by that Id");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+        return ResponseEntity.status(200).body(game.toMap());
+    }
 
 
     public Condition getConditionByLabel(String conditionLable){
@@ -219,12 +268,6 @@ public class GameRestController extends ApplicationRestController{
         }
     }
 
-    public String[] decriptCreds(String creds){
-        creds = creds.substring(6);
-        creds = new String(Base64.getDecoder().decode(creds));
-        String[] credsReturn = creds.split(":");
-        credsReturn[1] = ProtectionController.hash(credsReturn[1]);
-        return credsReturn;
-    }
+
 
 }
