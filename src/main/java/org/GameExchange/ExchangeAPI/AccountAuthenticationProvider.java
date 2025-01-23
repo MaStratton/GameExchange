@@ -10,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 //CustomAuthProvider
@@ -31,7 +30,6 @@ public class AccountAuthenticationProvider implements AuthenticationProvider {
             if (userExists) {
                 System.out.println("Properly Authorized");
                 auth = new UsernamePasswordAuthenticationToken(emailAddr, password, Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
-                //0auth.setAuthenticated(true);
                 System.out.println(auth.getPrincipal());
             }
         } catch (Exception e) {
