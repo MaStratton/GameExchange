@@ -9,7 +9,6 @@ import org.GameExchange.ExchangeAPI.Model.State;
 import org.GameExchange.ExchangeAPI.Model.StateJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Zip;
 import org.GameExchange.ExchangeAPI.Model.ZipJpaRepository;
-import org.apache.catalina.connector.Response;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -74,7 +73,7 @@ public class UserRestController extends ApplicationRestController{
         if (address == null){
             address = addAddressRecord(addressInfo);
             if (address == null){
-                return ResponseEntity.status(400).body(getReturnMap());
+                return ResponseEntity.status(500).body(getReturnMap());
             }
         }
         try {

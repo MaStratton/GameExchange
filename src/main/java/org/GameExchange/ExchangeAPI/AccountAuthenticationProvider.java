@@ -28,9 +28,7 @@ public class AccountAuthenticationProvider implements AuthenticationProvider {
             // write your custom logic to match username, password
             boolean userExists = personJpaRepository.checkCreds(emailAddr, password);
             if (userExists) {
-                System.out.println("Properly Authorized");
                 auth = new UsernamePasswordAuthenticationToken(emailAddr, password, Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
-                System.out.println(auth.getPrincipal());
             }
         } catch (Exception e) {
 

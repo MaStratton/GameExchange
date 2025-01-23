@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.GameExchange.ExchangeAPI.Model.Condition;
-import org.GameExchange.ExchangeAPI.Model.GameJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.GameOwnerRecord;
 import org.GameExchange.ExchangeAPI.Model.GameSystem;
 import org.GameExchange.ExchangeAPI.Model.GameSystemJpaRepository;
@@ -25,9 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/Game")
 public class GameRestController extends ApplicationRestController{
-
-    @Autowired
-    private GameJpaRepository gameJpaRepository;
 
     @Autowired 
     private PublisherJpaRepository publisherJpaRepository;
@@ -61,12 +57,12 @@ public class GameRestController extends ApplicationRestController{
             owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
         } catch (IndexOutOfBoundsException e){
             mapMessage.put("OwnershipError", "System Encountered Unexpected Error When Establishing Owner");
-            return ResponseEntity.status(400).body(getReturnMap());
+            return ResponseEntity.status(500).body(getReturnMap());
         }
 
         if (game == null || gameSystem == null || condition == null || owner == null){
             mapMessage.put("RecordsNotFound", "One or More Records Not Found, See Other Error Returns");
-            return ResponseEntity.status(400).body(getReturnMap());
+            return ResponseEntity.status(404).body(getReturnMap());
         }
 
         try{
@@ -108,9 +104,19 @@ public class GameRestController extends ApplicationRestController{
     public ResponseEntity<LinkedHashMap<String, String>> updateGameOwnerRecord(@PathVariable int id, @RequestHeader("Authorization") String auth, @RequestBody LinkedHashMap<String, String> input){
         String[] creds = decriptCreds(auth);
         String[] userInput = new String[2];
-        System.out.println(input);
+        Person owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
+
         userInput[0] = input.get("condition");
         userInput[1] = input.get("system");
+
+        GameOwnerRecord record = null;
+
+        try {
+            record = gameOwnerRecordJpaRepository.findByGameOwnerRecordIdAndOwnerPersonId(id, owner.getPersonId()).get(0);
+            }catch  (IndexOutOfBoundsException e){
+                mapMessage.put("RecordNotFound", "No Record Found For That Id");
+                return ResponseEntity.status(404).body(getReturnMap());
+            }
 
         for (int i = 0; i < userInput.length; i++){
             if (userInput[i] == null){
@@ -124,15 +130,7 @@ public class GameRestController extends ApplicationRestController{
 
         if (condition == null || system == null){
             mapMessage.put("RecordsNotFound","Records Not Found. See Error Output");
-            return ResponseEntity.status(400).body(getReturnMap());
-        }
-
-
-        Person owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
-
-        GameOwnerRecord record = getGORByIdAndOwner(id, owner.getPersonId());
-        if (record == null){
-            return ResponseEntity.status(400).body(getReturnMap());
+            return ResponseEntity.status(404).body(getReturnMap());
         }
 
         System.out.println(record.toFullString());
@@ -156,12 +154,14 @@ public class GameRestController extends ApplicationRestController{
     public ResponseEntity<Object> partialRecordsUpdate(@PathVariable int id, @RequestHeader("Authorization") String auth, @RequestBody LinkedHashMap<String, String> input){
         String[] creds = decriptCreds(auth);
 
+        GameOwnerRecord record = null;
 
         Person owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
-        GameOwnerRecord record = gameOwnerRecordJpaRepository.findByGameOwnerRecordIdAndOwnerPersonId(id, owner.getPersonId()).get(0);
-        if (record == null){
+        try {
+        record = gameOwnerRecordJpaRepository.findByGameOwnerRecordIdAndOwnerPersonId(id, owner.getPersonId()).get(0);
+        }catch  (IndexOutOfBoundsException e){
             mapMessage.put("RecordNotFound", "No Record Found For That Id");
-            return ResponseEntity.status(400).body(getReturnMap());
+            return ResponseEntity.status(404).body(getReturnMap());
         }
 
         Condition condition = null;
@@ -171,7 +171,7 @@ public class GameRestController extends ApplicationRestController{
             condition = getConditionByLabel(input.get("condition"));
             if (condition == null){
                 mapMessage.put("RecordsNotFound","Records Not Found. See Error Output");
-                return ResponseEntity.status(400).body(getReturnMap());
+                return ResponseEntity.status(404).body(getReturnMap());
             } else {
                 record.setCondition(condition);
             }
@@ -181,7 +181,7 @@ public class GameRestController extends ApplicationRestController{
             gameSystem = getGameSystemByName(input.get("system"));
             if (gameSystem == null){
                 mapMessage.put("RecordsNotFound","Records Not Found. See Error Output");
-                return ResponseEntity.status(400).body(getReturnMap());
+                return ResponseEntity.status(404).body(getReturnMap());
             } else {
                 record.setGameSystem(gameSystem);
             }
@@ -203,6 +203,22 @@ public class GameRestController extends ApplicationRestController{
             mapMessage.put("UnexpectedException", "System Has Encountered an Unexpexted Issue");
             return ResponseEntity.status(500).body(getReturnMap());
         }
+    }
+    
+    @RequestMapping(path="/Records/{id}", method=RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteRecord(@PathVariable int id, @RequestHeader("Authorization") String auth){
+        String[] creds = decriptCreds(auth);
+        Person owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
+        GameOwnerRecord record = null;
+        try {
+            record = gameOwnerRecordJpaRepository.findByGameOwnerRecordIdAndOwnerPersonId(id, owner.getPersonId()).get(0);
+        } catch (IndexOutOfBoundsException e){
+            mapMessage.put("RecordNotFound", "No Record Found For That Id");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+        gameOwnerRecordJpaRepository.delete(record);
+        mapMessage.put("DeleteSuccesful", "Record Deleted");
+        return ResponseEntity.status(204).body(getReturnMap());
     }
 
     @RequestMapping(path="/{id}", method=RequestMethod.GET)

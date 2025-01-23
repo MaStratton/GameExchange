@@ -3,8 +3,10 @@ package org.GameExchange.ExchangeAPI.Controller;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 
+import org.GameExchange.ExchangeAPI.Model.GameJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.GameOwnerRecordJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.PersonJpaRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ApplicationRestController {
@@ -14,6 +16,9 @@ public class ApplicationRestController {
 
         @Autowired
         protected GameOwnerRecordJpaRepository gameOwnerRecordJpaRepository;
+
+        @Autowired
+        protected GameJpaRepository gameJpaRepository;
 
 
     public LinkedHashMap<String, String> mapMessage = new LinkedHashMap<String, String>();
