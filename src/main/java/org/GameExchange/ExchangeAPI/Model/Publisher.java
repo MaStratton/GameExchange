@@ -1,6 +1,7 @@
 package org.GameExchange.ExchangeAPI.Model;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +25,18 @@ public class Publisher implements Serializable{
     }
 
     public Publisher(){}
+
+    public String getUri(){
+        return "localhost:8080/Game/Publisher/" + publisherId;
+    }
+
+    public LinkedHashMap<String, String> toMap(){
+        LinkedHashMap<String, String> mapReturn = new LinkedHashMap<>();
+        mapReturn.put("Id", String.valueOf(publisherId));
+        mapReturn.put("Name", publiherName);
+        return mapReturn;
+
+    }
 
     @Override
     public String toString() {

@@ -37,6 +37,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
             };
+            System.out.println("Header Went Through");
             filterChain.doFilter(wrapper, response);
         } catch (Exception e) {
             filterChain.doFilter(request, response);

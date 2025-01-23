@@ -11,6 +11,7 @@ import org.GameExchange.ExchangeAPI.Model.GameSystem;
 import org.GameExchange.ExchangeAPI.Model.GameSystemJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Person;
 import org.GameExchange.ExchangeAPI.Model.PublisherJpaRepository;
+import org.apache.catalina.connector.Response;
 import org.GameExchange.ExchangeAPI.Model.Game;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class GameRestController extends ApplicationRestController{
     @Autowired
     private GameSystemJpaRepository gameSystemJpaRepository;
     
-    @RequestMapping(method=RequestMethod.POST)
+    @RequestMapping(path="/Records", method=RequestMethod.POST)
     public ResponseEntity<LinkedHashMap<String, String>> addGameToOwner(@RequestHeader("Authorization") String authorization, @RequestBody LinkedHashMap<String,String> input){
         
         String[] creds = decriptCreds(authorization);
@@ -52,15 +53,12 @@ public class GameRestController extends ApplicationRestController{
                 return ResponseEntity.status(400).body(getReturnMap());
             }
         }
-        
-        
+                
         Game game = getGameByTitle(userInfo[0]);
         GameSystem gameSystem = getGameSystemByName(userInfo[1]);
         Condition condition = getConditionByLabel(userInfo[2].toLowerCase());
         Person owner = new Person();
 
-
-        
         try{
             owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
         } catch (IndexOutOfBoundsException e){
@@ -85,8 +83,18 @@ public class GameRestController extends ApplicationRestController{
         
     }
 
+    @RequestMapping(path="/{id}", method=RequestMethod.GET)
+    public ResponseEntity<Object> findGameById(@PathVariable int id){
+        Game game = gameJpaRepository.findById(id).get();
+        if (game == null){
+            mapMessage.put("RecordNotFound", "No Record Found by that Id");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+        return ResponseEntity.status(200).body(game.toMap());
+    }
 
-    @RequestMapping(path="", method=RequestMethod.GET)
+
+    @RequestMapping(path="/Records", method=RequestMethod.GET)
     public ResponseEntity<LinkedHashMap<Integer, LinkedHashMap<String, String>>> getAvailableGames(){
         List<GameOwnerRecord> records =  gameOwnerRecordJpaRepository.findAllAvailable();
         LinkedHashMap<Integer, LinkedHashMap<String, String>> lhmReturn = new LinkedHashMap<Integer, LinkedHashMap<String, String>>();
@@ -96,23 +104,20 @@ public class GameRestController extends ApplicationRestController{
         return ResponseEntity.status(200).body(lhmReturn);
     }
 
-    @RequestMapping(path="/{id}", method=RequestMethod.GET)
+    @RequestMapping(path="/Records/{id}", method=RequestMethod.GET)
     public  ResponseEntity<Object> getGameById(@PathVariable int id){
         GameOwnerRecord record = gameOwnerRecordJpaRepository.findById(id).get();
 
         if (record == null){
-            mapMessage.put("Game Not Found", "No Game Found by that Id");
+            mapMessage.put("RecordNotFound", "No Record Found by that Id");
             return ResponseEntity.status(404).body(getReturnMap());
         }
         return ResponseEntity.status(200).body(record.toMap());
         
-
-
-
     }
     
     
-    @RequestMapping(path="/{id}", method=RequestMethod.PUT)
+    @RequestMapping(path="/Records/{id}", method=RequestMethod.PUT)
     public ResponseEntity<LinkedHashMap<String, String>> updateGameOwnerRecord(@PathVariable int id, @RequestHeader("Authorization") String auth, @RequestBody LinkedHashMap<String, String> input){
         String[] creds = decriptCreds(auth);
         String[] userInput = new String[2];

@@ -111,8 +111,8 @@ public class GameOwnerRecord implements Serializable{
     public LinkedHashMap<String, String> toMap(){
         LinkedHashMap<String, String> mapReturn = new LinkedHashMap<String, String>();
         mapReturn.put("Record Id", String.valueOf(gameOwnerRecordId));
-        mapReturn.put("Title", game.getGameTitle());
-        mapReturn.put("System", gameSystem.getSystemName());
+        mapReturn.put("Game", game.getUri());
+        mapReturn.put("System", gameSystem.getUri());
         mapReturn.put("Owner", String.valueOf(owner.getUri()));
         return mapReturn;
     }

@@ -31,19 +31,15 @@ public class SecurityConfig {
         httpSecurity.addFilterBefore(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api-docs").permitAll()
-                .requestMatchers(HttpMethod.GET, "/*").permitAll()
-                .requestMatchers(HttpMethod.POST, "*/*").permitAll()
-                .requestMatchers(HttpMethod.PUT, "*/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/User/Register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/Game").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/Game").authenticated()
-                .requestMatchers(HttpMethod.GET, "/Game").authenticated()
-                .requestMatchers(HttpMethod.GET, "/Game/{id}").authenticated()
-                .requestMatchers("/error/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/Game/Records").authenticated()
+                .requestMatchers(HttpMethod.GET, "/Game/Records/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/Game").permitAll()
+                .requestMatchers("/error*").permitAll()
+                .anyRequest().authenticated()).httpBasic(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable);
 
-                .anyRequest().authenticated()).httpBasic(Customizer.withDefaults());
-                
+
         httpSecurity.cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedOrigins(List.of("all"));

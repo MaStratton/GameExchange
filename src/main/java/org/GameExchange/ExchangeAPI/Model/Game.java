@@ -1,8 +1,12 @@
 package org.GameExchange.ExchangeAPI.Model;
 
+import java.util.LinkedHashMap;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity(name="Games")
@@ -19,9 +23,26 @@ public class Game {
     @Column(name="publicationYear", nullable=false)
     private String publicationYear;
 
+    @ManyToOne
+    @JoinColumn(name="publisherId")
+    Publisher publisher;
+
     public Game(String gameTitile, String publicationYear) {
         this.gameTitle = gameTitile;
         this.publicationYear = publicationYear;
+    }
+    
+public LinkedHashMap<String, String> toMap(){
+    LinkedHashMap<String, String> mapReturn = new LinkedHashMap<>();
+    mapReturn.put("Id", String.valueOf(gameId));
+    mapReturn.put("Title", gameTitle);
+    mapReturn.put("Publisher", publisher.getUri());
+    mapReturn.put("Publication Year", publicationYear);
+    return mapReturn;
+}
+
+    public String getUri(){
+        return "localhost:8080/Game/" + gameId;
     }
 
     public Game() {}

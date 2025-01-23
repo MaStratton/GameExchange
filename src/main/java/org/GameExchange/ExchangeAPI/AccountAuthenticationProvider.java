@@ -1,12 +1,16 @@
 package org.GameExchange.ExchangeAPI;
 
 
+import java.util.Arrays;
+
 import org.GameExchange.ExchangeAPI.Model.PersonJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 //CustomAuthProvider
@@ -25,7 +29,10 @@ public class AccountAuthenticationProvider implements AuthenticationProvider {
             // write your custom logic to match username, password
             boolean userExists = personJpaRepository.checkCreds(emailAddr, password);
             if (userExists) {
-                auth = new UsernamePasswordAuthenticationToken(emailAddr, password);
+                System.out.println("Properly Authorized");
+                auth = new UsernamePasswordAuthenticationToken(emailAddr, password, Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+                //0auth.setAuthenticated(true);
+                System.out.println(auth.getPrincipal());
             }
         } catch (Exception e) {
 
