@@ -4,7 +4,6 @@ import org.GameExchange.ExchangeAPI.Model.Address;
 import org.GameExchange.ExchangeAPI.Model.AddressJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.City;
 import org.GameExchange.ExchangeAPI.Model.CityJpaRepository;
-import org.GameExchange.ExchangeAPI.Model.Game;
 import org.GameExchange.ExchangeAPI.Model.Person;
 import org.GameExchange.ExchangeAPI.Model.State;
 import org.GameExchange.ExchangeAPI.Model.StateJpaRepository;
