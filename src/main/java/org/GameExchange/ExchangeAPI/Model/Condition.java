@@ -28,6 +28,15 @@ public class Condition implements Serializable{
 
  
 
+    @Override
+    public String toString() {
+        return "Condition [conditionId=" + conditionId + ", conditionLabel=" + conditionLabel + "]";
+    }
+
+    public String getUri(){
+        return "localhost:8080/Game/Condition/" + conditionId;
+    }
+
     public int getConditionId() {
         return conditionId;
     }

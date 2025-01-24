@@ -27,6 +27,7 @@ public class OfferRestController extends ApplicationRestController{
     @Autowired
     private OfferRecordJpaRepository offerRecordJpaRepository;
 
+
     @RequestMapping(path="", method=RequestMethod.POST)
     private ResponseEntity<Object> makeOffer(@RequestBody OfferDTO offer, @RequestHeader("Authorization") String auth){
         String[] creds = decriptCreds(auth);

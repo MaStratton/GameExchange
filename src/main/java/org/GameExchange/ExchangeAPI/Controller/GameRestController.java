@@ -1,13 +1,16 @@
 package org.GameExchange.ExchangeAPI.Controller;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.GameExchange.ExchangeAPI.Model.Condition;
+import org.GameExchange.ExchangeAPI.Model.ConditionJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.GameOwnerRecord;
 import org.GameExchange.ExchangeAPI.Model.GameSystem;
 import org.GameExchange.ExchangeAPI.Model.GameSystemJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Person;
+import org.GameExchange.ExchangeAPI.Model.Publisher;
 import org.GameExchange.ExchangeAPI.Model.PublisherJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Game;
 
@@ -30,6 +33,9 @@ public class GameRestController extends ApplicationRestController{
 
     @Autowired
     private GameSystemJpaRepository gameSystemJpaRepository;
+
+    @Autowired
+    private ConditionJpaRepository conditionJpaRepository;
     
     @RequestMapping(path="/Records", method=RequestMethod.POST)
     public ResponseEntity<Object> addGameToOwner(@RequestHeader("Authorization") String authorization, @RequestBody LinkedHashMap<String,String> input){
@@ -37,9 +43,9 @@ public class GameRestController extends ApplicationRestController{
         String[] creds = decriptCreds(authorization);
 
         String[] userInfo = new String[4];
-        userInfo[0] = input.get("gameTitle");
-        userInfo[1] = input.get("gameSystem");
-        userInfo[2] = input.get("condition");
+        userInfo[0] = input.get("gameId");
+        userInfo[1] = input.get("systemId");
+        userInfo[2] = input.get("conditionId");
 
         for (int i = 0; i < userInfo.length - 1; i++){
             if (userInfo[i] == null || userInfo[i].isBlank()){
@@ -48,9 +54,9 @@ public class GameRestController extends ApplicationRestController{
             }
         }
                 
-        Game game = getGameByTitle(userInfo[0]);
-        GameSystem gameSystem = getGameSystemByName(userInfo[1]);
-        Condition condition = getConditionByLabel(userInfo[2].toLowerCase());
+        Game game = getGameById(userInfo[0]);
+        GameSystem gameSystem = getGameSystemById(userInfo[1]);
+        Condition condition = getConditionById(userInfo[2].toLowerCase());
         Person owner = new Person();
 
         try{
@@ -125,8 +131,8 @@ public class GameRestController extends ApplicationRestController{
             }
         }
 
-        Condition condition = getConditionByLabel(userInput[0].toLowerCase());
-        GameSystem system = getGameSystemByName(userInput[1]);
+        Condition condition = getConditionById(userInput[0].toLowerCase());
+        GameSystem system = getGameSystemById(userInput[1]);
 
         if (condition == null || system == null){
             mapMessage.put("RecordsNotFound","Records Not Found. See Error Output");
@@ -168,7 +174,7 @@ public class GameRestController extends ApplicationRestController{
         GameSystem gameSystem = null;
 
         if (input.get("condition") != null){
-            condition = getConditionByLabel(input.get("condition"));
+            condition = getConditionById(input.get("condition"));
             if (condition == null){
                 mapMessage.put("RecordsNotFound","Records Not Found. See Error Output");
                 return ResponseEntity.status(404).body(getReturnMap());
@@ -178,7 +184,7 @@ public class GameRestController extends ApplicationRestController{
         }
 
         if (input.get("system") != null){
-            gameSystem = getGameSystemByName(input.get("system"));
+            gameSystem = getGameSystemById(input.get("system"));
             if (gameSystem == null){
                 mapMessage.put("RecordsNotFound","Records Not Found. See Error Output");
                 return ResponseEntity.status(404).body(getReturnMap());
@@ -231,22 +237,152 @@ public class GameRestController extends ApplicationRestController{
         return ResponseEntity.status(200).body(game.toMap());
     }
 
+    @RequestMapping(path="/Publisher", method=RequestMethod.POST)
+    public ResponseEntity<Object> addPublisher(@RequestBody HashMap<String, String> input){
+        String publisherName = input.get("publisherName");
 
-    public Condition getConditionByLabel(String conditionLable){
+        if (publisherName == null){
+            mapMessage.put("InvalidInput", "Please Enter A Publisher Name");
+            return ResponseEntity.status(400).body(getReturnMap());
+        }
+
+        Publisher publisher = new Publisher( publisherName);
+
         try {
-            switch (conditionLable.toLowerCase()) {
-                case "mint":
+            publisherJpaRepository.save(publisher);
+            mapMessage.put("InputSuccessful", "Publisher Successfully Created");
+            return ResponseEntity.status(201).body(getReturnMap());
+        } catch (Exception e){
+            System.out.println("Error Adding Publisher: " + e.getMessage());
+            mapMessage.put("Unexpexted Error", "Server Has Enocuntered an unexpected error");
+            return ResponseEntity.status(500).body(getReturnMap());
+        }
+    }
+
+    @RequestMapping(path="/Publishers", method=RequestMethod.GET)
+    public ResponseEntity<Object> getPublishers(){
+        return ResponseEntity.status(200).body(publisherJpaRepository.findAll());
+    }
+
+    @RequestMapping(path="/Publisher/{id}", method=RequestMethod.GET)
+    public ResponseEntity<Object> getPublishers(@PathVariable("id") int id){
+        try {
+            Publisher publisher = publisherJpaRepository.findById(id).get();
+            return ResponseEntity.status(200).body(publisher);
+        } catch (IndexOutOfBoundsException e){
+            mapMessage.put("PublisherNotFound", "No Publisher Found");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+    }
+
+    @RequestMapping(path="/Systems", method=RequestMethod.GET)
+    public ResponseEntity<Object> getSmaeSystems(){
+        return ResponseEntity.status(200).body(gameSystemJpaRepository.findAll());
+    }
+
+    @RequestMapping(path="/System/{id}", method=RequestMethod.GET)
+    public ResponseEntity<Object> getGameSystems(@PathVariable("id") int id){
+        try {
+            GameSystem gameSystems = gameSystemJpaRepository.findById(id).get();
+            return ResponseEntity.status(200).body(gameSystems);
+        } catch (IndexOutOfBoundsException e){
+            mapMessage.put("SystemNotFound", "No Game System Found");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+    }
+
+    @RequestMapping(path="/Conditions", method=RequestMethod.GET)
+    public ResponseEntity<Object> getCondition(){
+        return ResponseEntity.status(200).body(conditionJpaRepository.findAll());
+    }
+
+    @RequestMapping(path="/Condition/{id}", method=RequestMethod.GET)
+    public ResponseEntity<Object> getCondition(@PathVariable("id") int id){
+        try {
+            Condition condition = conditionJpaRepository.findById(id).get();
+            return ResponseEntity.status(200).body(condition);
+        } catch (IndexOutOfBoundsException e){
+            mapMessage.put("SystemNotFound", "No Condition Found");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+    }
+
+
+    @RequestMapping(path="/Game", method=RequestMethod.POST)
+    public ResponseEntity<Object> addGame(@RequestBody HashMap<String, String> input){
+        String title = input.get("title");
+        String publisherId = input.get("publisherId");
+
+        if (title == null){
+            mapMessage.put("InvalidInput", "Please Enter A Game Title");
+            return ResponseEntity.status(400).body(getReturnMap());
+        }
+
+        if (publisherId == null){
+            mapMessage.put("InvalidInput", "Please Enter a Publisher Id");
+            return ResponseEntity.status(400).body(getReturnMap());
+        }
+
+    
+        Publisher publisher = null;
+
+        try {
+            publisher = publisherJpaRepository.findById(Integer.parseInt(publisherId)).get();
+        } catch (IndexOutOfBoundsException e){
+            mapMessage.put("PublisherNotFound", "Publisher Not Found");
+            return ResponseEntity.status(404).body(getReturnMap());
+        } catch (NumberFormatException e){
+            mapMessage.put("InvalidInput", "Please Enter a Valid Publisher Id");
+            return ResponseEntity.status(400).body(getReturnMap());
+        }
+
+        try {
+            publisherJpaRepository.save(publisher);
+            mapMessage.put("InputSuccessful", "Publisher Successfully Created");
+            return ResponseEntity.status(201).body(getReturnMap());
+        } catch (Exception e){
+            System.out.println("Error Adding Publisher: " + e.getMessage());
+            mapMessage.put("Unexpexted Error", "Server Has Enocuntered an unexpected error");
+            return ResponseEntity.status(500).body(getReturnMap());
+        }
+    }
+
+    @RequestMapping(path="/Games", method=RequestMethod.GET)
+    public ResponseEntity<Object> getGames(){
+        return ResponseEntity.status(200).body(gameJpaRepository.findAll());
+    }
+
+    @RequestMapping(path="/Games/{id}", method=RequestMethod.GET)
+    public ResponseEntity<Object> getGames(@PathVariable("id") int id){
+        try {
+            Game game = gameJpaRepository.findById(id).get();
+            return ResponseEntity.status(200).body(game);
+        } catch (IndexOutOfBoundsException e){
+            mapMessage.put("GmaNotFound", "No Game Found");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+    }
+
+
+
+    public Condition getConditionById(String conditionId){
+        try {
+            switch (Integer.parseInt(conditionId)) {
+                case 1:
                     return new Condition(1, "MINT");
-                case "good":
+                case 2:
                     return new Condition(2, "GOOD");
-                case "fair":
+                case 3:
                     return new Condition(3, "FAIR");
-                case "poor":
+                case 4:
                     return new Condition(4, "POOR");
                 default:
                     mapMessage.put("ConditionError","Invalid Condition Inputted");
                     return null;
             }
+        } catch (NumberFormatException e){
+            mapMessage.put("InvalidInput", "Please Enter a Valid ConditionId Id");
+            return null;
         } catch (Exception e){
             mapMessage.put("ConditionError","Invalid Condition Inputted");
             System.out.println(e.getMessage());
@@ -254,24 +390,39 @@ public class GameRestController extends ApplicationRestController{
         }
     }
 
-    public Game getGameByTitle(String gameTitle){
+    public Game getGameById(String gameId){
         try {
-            Game game = gameJpaRepository.findByTitle(gameTitle).get(0);
+            Game game = gameJpaRepository.findById(Integer.parseInt(gameId)).get();
+            if (game == null){
+                mapMessage.put("GameDoesNotExist", "No Game Exists by That Title");
+                return null;
+            }
             return game;
         } catch (IndexOutOfBoundsException e){
-            mapMessage.put("GameDoesNotExist", "No Game Exists by That Title, Please Add To Records");
+            mapMessage.put("GameDoesNotExist", "No Game Exists by That Title");
+            return null;
+        }catch (NumberFormatException e){
+            mapMessage.put("InvalidInput", "Please Enter a Valid Game Id");
             return null;
         }
     }
 
-    public GameSystem getGameSystemByName(String systemName){
+    public GameSystem getGameSystemById(String systemId){
         try{
-            GameSystem gameSystem = gameSystemJpaRepository.findByName(systemName).get(0);
+            GameSystem gameSystem = gameSystemJpaRepository.findById(Integer.parseInt(systemId)).get();
+            if (gameSystem == null){
+            mapMessage.put("GameSystemDoesNotExist", "System Does Not Exist");
+            return null;
+            }
             return gameSystem;
         } catch (IndexOutOfBoundsException e){
-            mapMessage.put("GameSystemDoesNotExist", "No System Exists by That Name, Please Add To Records");
+            mapMessage.put("GameSystemDoesNotExist", "System Does Not Exist");
+            return null;
+        } catch (NumberFormatException e){
+            mapMessage.put("InvalidInput", "Please Enter a Valid Game System Id");
             return null;
         }
+
     }
 
     public GameOwnerRecord getGORByIdAndOwner(int Id, int ownerId){
