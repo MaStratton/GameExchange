@@ -37,9 +37,59 @@ public interface GameOwnerRecordJpaRepository extends JpaRepository<GameOwnerRec
             CROSS JOIN People P
             WHERE GOR.owner.personId = :ownerId
             AND GOR.isInOffer = TRUE
+            AND GOR.offerRecord.offerStatus LIKE :status
+            AND GOR.owner.personId = GOR.offerSender.personId
+        """)
+    List<GameOwnerRecord> findOffersByGameOwnerSent(@Param("ownerId") int ownerId); 
+    
+    @Query("""
+        SELECT GOR FROM GameOwnerRecords GOR 
+            CROSS JOIN People P
+            WHERE GOR.owner.personId = :ownerId
+            AND GOR.isInOffer = TRUE
+            AND GOR.offerRecord.offerStatus LIKE :status
+            AND GOR.owner.personId != GOR.offerSender.personId
+        """)
+    List<GameOwnerRecord> findOffersByGameOwnerReceived(@Param("ownerId") int ownerId);
+
+    @Query("""
+        SELECT GOR FROM GameOwnerRecords GOR 
+            CROSS JOIN People P
+            WHERE GOR.owner.personId = :ownerId
+            AND GOR.isInOffer = TRUE
+            AND GOR.offerRecord.offerStatus LIKE :status
+            AND GOR.owner.personId = GOR.offerSender.personId
+        """)
+    List<GameOwnerRecord> findOffersByGameOwnerSent(@Param("ownerId") int ownerId, @Param("status") String status); 
+    
+    @Query("""
+        SELECT GOR FROM GameOwnerRecords GOR 
+            CROSS JOIN People P
+            WHERE GOR.owner.personId = :ownerId
+            AND GOR.isInOffer = TRUE
+            AND GOR.offerRecord.offerStatus LIKE :status
+            AND GOR.owner.personId != GOR.offerSender.personId
+        """)
+    List<GameOwnerRecord> findOffersByGameOwnerReceived(@Param("ownerId") int ownerId, @Param("status") String status);
+
+    @Query("""
+        SELECT GOR FROM GameOwnerRecords GOR 
+            CROSS JOIN People P
+            WHERE GOR.owner.personId = :ownerId
+            AND GOR.isInOffer = TRUE
             AND GOR.offerRecord.offerRecordId = :recordId
         """)
     List<GameOwnerRecord> findOfferByOwnerAndOfferId(@Param("ownerId") int ownerId, @Param("recordId") int recordID);
+
+    @Query("""
+        SELECT GOR FROM GameOwnerRecords GOR 
+            CROSS JOIN People P
+            WHERE GOR.isInOffer = TRUE
+            AND GOR.offerSender.personId = :senderId
+        """)
+    List<GameOwnerRecord> findOfferBySender(@Param("senderId") int senderId);
+
+
             
 
 }

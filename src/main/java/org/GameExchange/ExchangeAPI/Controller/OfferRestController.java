@@ -1,7 +1,6 @@
 package org.GameExchange.ExchangeAPI.Controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 
 
 @RestController
@@ -110,13 +110,33 @@ public class OfferRestController extends ApplicationRestController{
         Person owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
 
         String status = input.get("status");
+        String by = input.get("by");
+        if (by == null) by = "all";
 
         List<GameOwnerRecord> recordsInOffers = null;
 
         if (status != null) {
-            recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwner(owner.getPersonId(), status);
+            switch (by){
+                case "myself":
+                    recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwnerSent(owner.getPersonId(), status);
+                    break;
+                case "other":
+                    recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwnerReceived(owner.getPersonId(), status);
+                    break;
+                default:
+                    recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwner(owner.getPersonId(), status);
+            }
         } else {
-            recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwner(owner.getPersonId());;
+            switch (by){
+            case "myself":
+                    recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwnerSent(owner.getPersonId());
+                    break;
+                case "other":
+                    recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwnerReceived(owner.getPersonId());
+                    break;
+                default:
+                    recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwner(owner.getPersonId());
+            }
         }
 
         if (recordsInOffers.size() == 0){
@@ -161,6 +181,34 @@ public class OfferRestController extends ApplicationRestController{
             }
         }
         return records;
+    }
+
+    @RequestMapping(path="/{id}", method=RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteOffer(@RequestHeader("Authorization") String auth, @PathVariable("id") int id){
+        String[] creds = decriptCreds(auth);
+        Person sender = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
+
+        List<GameOwnerRecord> recordsInOffers = gameOwnerRecordJpaRepository.findOfferBySender(sender.getPersonId());
+
+        if (recordsInOffers == null){
+            mapMessage.put("NoOfferFound", " No Offer Found By That Id");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+
+        for (GameOwnerRecord GOR: recordsInOffers){
+            try {
+                GOR.setInOffer(false);
+                GOR.setOfferRecord(null);
+                GOR.setOfferSender(null);
+                gameOwnerRecordJpaRepository.save(GOR);
+            } catch (Exception e){
+                System.out.println("Error On updating all recoreds: " + e.getMessage());
+                mapMessage.put("Unexpexted Error", "Server Has Enocuntered an unexpected error");
+                return ResponseEntity.status(500).body(getReturnMap());
+            }
+        }
+        mapMessage.put("DeleteSuccessful","Offer Record Deleted");
+        return ResponseEntity.status(200).body(getReturnMap());
     }
 
     @RequestMapping(path="/{id}/{decision}", method=RequestMethod.PATCH)
