@@ -227,15 +227,7 @@ public class GameRestController extends ApplicationRestController{
         return ResponseEntity.status(204).body(getReturnMap());
     }
 
-    @RequestMapping(path="/{id}", method=RequestMethod.GET)
-    public ResponseEntity<Object> findGameById(@PathVariable int id){
-        Game game = gameJpaRepository.findById(id).get();
-        if (game == null){
-            mapMessage.put("RecordNotFound", "No Record Found by that Id");
-            return ResponseEntity.status(404).body(getReturnMap());
-        }
-        return ResponseEntity.status(200).body(game.toMap());
-    }
+
 
     @RequestMapping(path="/Publisher", method=RequestMethod.POST)
     public ResponseEntity<Object> addPublisher(@RequestBody HashMap<String, String> input){
@@ -352,7 +344,7 @@ public class GameRestController extends ApplicationRestController{
         return ResponseEntity.status(200).body(gameJpaRepository.findAll());
     }
 
-    @RequestMapping(path="/Games/{id}", method=RequestMethod.GET)
+    @RequestMapping(path="/Game/{id}", method=RequestMethod.GET)
     public ResponseEntity<Object> getGames(@PathVariable("id") int id){
         try {
             Game game = gameJpaRepository.findById(id).get();
