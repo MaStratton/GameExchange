@@ -60,6 +60,21 @@ public class OfferRecord {
                 + creationTime + "]";
     }
 
+
+    public void setOfferRecordId(int offerRecordId) {
+        this.offerRecordId = offerRecordId;
+    }
+
+
+    public void setOfferStatus(String offerStatus) {
+        this.offerStatus = offerStatus;
+    }
+
+
+    public void setCreationTime(Timestamp creationTime) {
+        this.creationTime = creationTime;
+    }
+
     
 
     

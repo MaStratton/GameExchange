@@ -31,6 +31,15 @@ public interface GameOwnerRecordJpaRepository extends JpaRepository<GameOwnerRec
             AND GOR.offerRecord.offerStatus LIKE :status
         """)
     List<GameOwnerRecord> findOffersByGameOwner(@Param("ownerId") int ownerId, @Param("status") String status);
+
+    @Query("""
+        SELECT GOR FROM GameOwnerRecords GOR 
+            CROSS JOIN People P
+            WHERE GOR.owner.personId = :ownerId
+            AND GOR.isInOffer = TRUE
+            AND GOR.offerRecord.offerRecordId = :recordId
+        """)
+    List<GameOwnerRecord> findOfferByOwnerAndOfferId(@Param("ownerId") int ownerId, @Param("recordId") int recordID);
             
 
 }

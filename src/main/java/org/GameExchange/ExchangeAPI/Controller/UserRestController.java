@@ -103,9 +103,95 @@ public class UserRestController extends ApplicationRestController{
             return ResponseEntity.status(204).body(getReturnMap());
         }
     
+    }
 
+    @RequestMapping(path="", method=RequestMethod.PUT)
+    public ResponseEntity<Object> updateFullUser(@RequestHeader("Authorization") String auth, @RequestBody Map<String,String> input){
+        String creds[] = decriptCreds(auth);
+        String[] userInfo = new String[2];
+        userInfo[0] = input.get("firstName");
+        userInfo[1] = input.get("lastName");
+
+        for (int i = 0; i < userInfo.length; i++){
+            if ((userInfo[i] == null || userInfo[i].isBlank()) && i != 1){
+                mapMessage.put("MissingUserInformation", "Missing User Information");    
+                return ResponseEntity.status(400).body(getReturnMap());
+            }
+        }
+
+        String[] addressInfo = new String[] {input.get("addressLine1"),
+            input.get("addressLine2"),
+            input.get("cityName"),
+            input.get("stateAbbr"),
+            input.get("zipCode")};
+            
+        Address address = getAddress(addressInfo);
+        if (address == null){
+            address = addAddressRecord(addressInfo);
+            if (address == null){
+                return ResponseEntity.status(500).body(getReturnMap());
+            }
+        }
+
+        Person person = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
+
+        person.setAddress(address);
+        person.setFirstName(userInfo[0]);
+        person.setFirstName(userInfo[1]);
+
+        try{
+            mapMessage.put("Succes", "User Updated added");
+            return ResponseEntity.status(204).body(getReturnMap());
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(500).body(getReturnMap());
+        }
+        
     }
     
+    @RequestMapping(path="", method=RequestMethod.PATCH)
+    public ResponseEntity<Object> updatePartialUser(@RequestHeader("Authorization") String auth, @RequestBody Map<String,String> input){
+        String creds[] = decriptCreds(auth);
+        String[] userInfo = new String[2];
+        userInfo[0] = input.get("firstName");
+        userInfo[1] = input.get("lastName");
+
+
+        String[] addressInfo = new String[] {input.get("addressLine1"),
+            input.get("addressLine2"),
+            input.get("cityName"),
+            input.get("stateAbbr"),
+            input.get("zipCode")};
+            
+        Address address = getAddress(addressInfo);
+        if (address == null){
+            address = addAddressRecord(addressInfo);
+            if (address == null){
+                return ResponseEntity.status(500).body(getReturnMap());
+            }
+        }
+
+        Person person = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
+
+        if (address != null){
+            person.setAddress(address);
+        }
+        if (userInfo[0] != null){
+            person.setFirstName(userInfo[0]);
+        }
+        if (userInfo[1] != null){
+            person.setFirstName(userInfo[1]);
+        }
+
+        try{
+            mapMessage.put("Succes", "User Updated added");
+            return ResponseEntity.status(204).body(getReturnMap());
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(500).body(getReturnMap());
+        }
+        
+    }
 
     Address getAddress(String[] input){
         Address address;

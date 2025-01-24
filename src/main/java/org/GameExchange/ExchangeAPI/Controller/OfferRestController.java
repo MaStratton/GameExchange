@@ -12,6 +12,7 @@ import org.GameExchange.ExchangeAPI.Model.OfferRecordJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -160,6 +161,43 @@ public class OfferRestController extends ApplicationRestController{
             }
         }
         return records;
+    }
+
+    @RequestMapping(path="/{id}/{decision}", method=RequestMethod.PATCH)
+    public ResponseEntity<Object> decideOffer(@RequestHeader("Authorization") String auth, @PathVariable("id") int id, @PathVariable("decision") String decision){
+        String[] creds = decriptCreds(auth);
+        Person owner = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
+
+        switch (decision) {
+            case "accept":
+            case "reject":
+            break;
+            default:{
+                mapMessage.put("InvalidDecision", "Invalid Decision. Valid: accept, reject");
+                return ResponseEntity.status(400).body(getReturnMap());
+            }
+        }
+        List<GameOwnerRecord> recordsInOffers = gameOwnerRecordJpaRepository.findOfferByOwnerAndOfferId(owner.getPersonId(), id);
+
+        if (recordsInOffers == null){
+            mapMessage.put("NoOfferFound", " No Offer Found By That Id");
+            return ResponseEntity.status(404).body(getReturnMap());
+        }
+
+        
+
+        try {
+            OfferRecord offerRecord = recordsInOffers.get(0).getOfferRecord();
+            offerRecord.setOfferStatus(decision);
+            offerRecordJpaRepository.save(offerRecord);
+            mapMessage.put("Updated", "Record Updated");
+            return ResponseEntity.status(204).body(getReturnMap());
+        } catch (Exception e){
+            System.out.println("Exception updating Offer Record: " + e.getMessage());
+            mapMessage.put("Unexpexted Error", "Server Has Enocuntered an unexpected error");
+            return ResponseEntity.status(500).body(getReturnMap());
+        }
+
     }
 
     public LinkedHashMap<String, String> getFullOfferMap(GameOwnerRecord GOR){
