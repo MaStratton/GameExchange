@@ -5,5 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OfferRecordJpaRepository extends JpaRepository<OfferRecord, Integer>{
+
+
     
 }

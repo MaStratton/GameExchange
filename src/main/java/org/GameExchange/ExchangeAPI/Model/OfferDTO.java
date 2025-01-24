@@ -15,10 +15,10 @@ public class OfferDTO {
     }
     
 
-    public OfferDTO(List<Integer> requested, List<Integer> offered, int requesteeId) {
+    public OfferDTO(List<Integer> requested, List<Integer> offered, int requestee) {
         this.requested = requested;
         this.offered = offered;
-        this.requesteeId = requesteeId;
+        this.requesteeId = requestee;
     }
 
 

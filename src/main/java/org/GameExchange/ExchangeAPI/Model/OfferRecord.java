@@ -36,7 +36,6 @@ public class OfferRecord {
 
 
     public OfferRecord() {
-        this.offerStatus = "pending";
     }
 
 

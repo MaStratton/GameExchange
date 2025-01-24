@@ -193,8 +193,8 @@ public class GameOwnerRecord implements Serializable{
                 condition.getConditionLabel(),
                 owner.getFirstName(),
                 isInOffer,
-                offerRecord,
-                offerSender
+                offerRecord.toString(),
+                offerSender.toString()
                 );
 
         return strReturn;
