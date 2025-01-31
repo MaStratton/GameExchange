@@ -42,7 +42,7 @@ public LinkedHashMap<String, String> toMap(){
 }
 
     public String getUri(){
-        return "localhost:8080/Game/Game/" + gameId;
+        return "localhost:8080/Game/" + gameId;
     }
 
     public Game() {}

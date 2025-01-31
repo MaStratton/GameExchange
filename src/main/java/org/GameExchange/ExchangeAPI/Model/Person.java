@@ -42,7 +42,7 @@ public class Person implements Serializable{
     // private int addressId;
 
     public String getUri(){
-        return "localhost:8080/User/User/" + personId;
+        return "localhost:8080/User/" + personId;
     }
 
     public Person (String firstName, String lastName, String emailAddr, String password, Address address){
@@ -95,15 +95,15 @@ public class Person implements Serializable{
 
 
 
-    // public String getPassword() {
-    //     return password;
-    // }
+    public String getPassword() {
+        return password;
+    }
 
 
 
-    // public Address getAddress() {
-    //     return address;
-    // }
+    public Address getAddress() {
+        return address;
+    }
 
     public void setPersonId(int personId) {
         this.personId = personId;
