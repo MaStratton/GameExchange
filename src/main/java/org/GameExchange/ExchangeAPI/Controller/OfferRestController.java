@@ -113,6 +113,11 @@ public class OfferRestController extends ApplicationRestController{
         String status = input.get("status");
         String by = input.get("by");
         if (by == null) by = "all";
+        status = status.toLowerCase();
+
+        if (!(status.equalsIgnoreCase("pending") || status.equalsIgnoreCase("accepted") || status.equalsIgnoreCase("rejected"))){
+            status = null;
+        }
 
         List<GameOwnerRecord> recordsInOffers = null;
 
@@ -125,6 +130,7 @@ public class OfferRestController extends ApplicationRestController{
                     recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwnerReceived(owner.getPersonId(), status);
                     break;
                 default:
+                    System.out.println("HIT BUT WRONG");
                     recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwner(owner.getPersonId(), status);
             }
         } else {
@@ -136,6 +142,7 @@ public class OfferRestController extends ApplicationRestController{
                     recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwnerReceived(owner.getPersonId());
                     break;
                 default:
+                    System.out.println("HIT");
                     recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwner(owner.getPersonId());
             }
         }
@@ -263,7 +270,6 @@ public class OfferRestController extends ApplicationRestController{
         mapReturn.put("Offer Id", offerRecordId);
         return mapReturn;
     }
-
 
     
 }
