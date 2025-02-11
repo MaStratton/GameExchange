@@ -104,5 +104,21 @@ public class Person implements Serializable{
     public Address getAddress() {
         return address;
     }
+
+    public void setPersonId(int personId) {
+        this.personId = personId;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setEmailAddr(String emailAddr) {
+        this.emailAddr = emailAddr;
+    }
     
 }

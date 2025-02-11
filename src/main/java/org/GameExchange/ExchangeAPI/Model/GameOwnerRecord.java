@@ -45,6 +45,10 @@ public class GameOwnerRecord implements Serializable{
     @ManyToOne
     @JoinColumn(name="OfferSenderId")
     private Person offerSender;
+
+    public String getUri(){
+        return "localhost:8080/Game/Record/" + gameOwnerRecordId;
+    }
     
 
     public GameOwnerRecord(Person owner, Game game, GameSystem system, Condition condition) {
@@ -108,6 +112,8 @@ public class GameOwnerRecord implements Serializable{
         this.condition = condition;
     }
 
+
+    
     public LinkedHashMap<String, String> toMap(){
         LinkedHashMap<String, String> mapReturn = new LinkedHashMap<String, String>();
         mapReturn.put("Record Id", String.valueOf(gameOwnerRecordId));
@@ -115,6 +121,36 @@ public class GameOwnerRecord implements Serializable{
         mapReturn.put("System", gameSystem.getUri());
         mapReturn.put("Owner", String.valueOf(owner.getUri()));
         return mapReturn;
+    }
+
+
+    public void setGameOwnerRecordId(int gameOwnerRecordId) {
+        this.gameOwnerRecordId = gameOwnerRecordId;
+    }
+
+
+    public void setOwner(Person owner) {
+        this.owner = owner;
+    }
+
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+
+    public void setInOffer(boolean isInOffer) {
+        this.isInOffer = isInOffer;
+    }
+
+
+    public void setOfferRecord(OfferRecord offerRecord) {
+        this.offerRecord = offerRecord;
+    }
+
+
+    public void setOfferSender(Person offerSender) {
+        this.offerSender = offerSender;
     }
 
 
@@ -157,10 +193,12 @@ public class GameOwnerRecord implements Serializable{
                 condition.getConditionLabel(),
                 owner.getFirstName(),
                 isInOffer,
-                offerRecord,
-                offerSender
+                offerRecord.toString(),
+                offerSender.toString()
                 );
 
         return strReturn;
     }
+
+
 }

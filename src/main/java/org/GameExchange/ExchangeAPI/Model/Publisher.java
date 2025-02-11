@@ -24,6 +24,10 @@ public class Publisher implements Serializable{
         this.publiherName = publiherName;
     }
 
+    public Publisher(String publisherName){
+        this.publiherName = publisherName;
+    }
+
     public Publisher(){}
 
     public String getUri(){

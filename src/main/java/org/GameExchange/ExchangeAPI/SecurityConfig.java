@@ -32,6 +32,8 @@ public class SecurityConfig {
 
         httpSecurity.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.POST, "/User/Register").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/User").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/User").authenticated()
                 .requestMatchers(HttpMethod.POST, "/Game").authenticated()
                 .requestMatchers(HttpMethod.GET, "/Game/Records").authenticated()
                 .requestMatchers(HttpMethod.GET, "/Game/Records/{id}").authenticated()

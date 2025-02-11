@@ -2,8 +2,7 @@ package org.GameExchange.ExchangeAPI.Model;
 
 import java.sql.Timestamp;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,13 +17,14 @@ import jakarta.persistence.Table;
 public class OfferRecord {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="offerRecordId")
     private int offerRecordId;
 
     @Column(name="offerStatus")
     private String offerStatus;
 
-    @Column(name="offerCreationTime")
+    @Column(name="offerCreationTime", insertable=false)
     private Timestamp creationTime;
 
 
@@ -36,7 +36,6 @@ public class OfferRecord {
 
 
     public OfferRecord() {
-        this.offerStatus = "pending";
     }
 
 
@@ -59,6 +58,21 @@ public class OfferRecord {
     public String toString() {
         return "OfferRecord [offerRecordId=" + offerRecordId + ", offerStatus=" + offerStatus + ", creationTime="
                 + creationTime + "]";
+    }
+
+
+    public void setOfferRecordId(int offerRecordId) {
+        this.offerRecordId = offerRecordId;
+    }
+
+
+    public void setOfferStatus(String offerStatus) {
+        this.offerStatus = offerStatus;
+    }
+
+
+    public void setCreationTime(Timestamp creationTime) {
+        this.creationTime = creationTime;
     }
 
     
