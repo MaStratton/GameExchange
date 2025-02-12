@@ -3,7 +3,7 @@ services:
   api1:
     image: game-api:latest
     build:
-      context: .
+      context: ./api
       dockerfile: Dockerfile.api
     container_name: VideoGameAPI1
     ports:
