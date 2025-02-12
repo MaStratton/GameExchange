@@ -72,4 +72,4 @@ networks:
     name: game-network
 volumes:
   VideoGameDBVolume:
-    name: VideoGameDBVolume
+    external: true
