@@ -50,3 +50,8 @@ build/
 
 ### Setup Info###
 SetupAndDocumentation
+
+### Node ###
+./emailServer/node_modules/
+./emailServer/node_modules/**
+./emailServer/node_modules/*
