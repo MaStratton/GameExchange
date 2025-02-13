@@ -100,6 +100,7 @@ public class UserRestController extends ApplicationRestController{
             person.setPassword(ProtectionController.hash(input.get("password")));
             personJpaRepository.save(person);
             mapMessage.put("UpdateSuccessful", "Password Successfully Changed");
+            applicationKafkaProducer.sendPasswdChange(person.getPersonId());
             return ResponseEntity.status(204).body(getReturnMap());
         }
     

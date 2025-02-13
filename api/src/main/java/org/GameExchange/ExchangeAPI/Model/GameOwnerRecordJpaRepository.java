@@ -90,6 +90,20 @@ public interface GameOwnerRecordJpaRepository extends JpaRepository<GameOwnerRec
     List<GameOwnerRecord> findOfferBySender(@Param("senderId") int senderId);
 
 
-            
+    @Query("""
+            SELECT P FROM GameOwnerRecords GOR
+                CROSS JOIN People P
+                WHERE GOR.offerRecord.offerRecordId = :offerRecordId
+                AND GOR.owner.personId != :senderId
+            """)
+    Person findPersonByOfferIdAndOtherPersonId(@Param("offerRecordId") int offerRecordId, @Param("senderId") int senderId);
+
+    @Query("""
+            SELECT GOR FROM GameOwnerRecords GOR
+                CROSS JOIN People P
+                WHERE GOR.gameOwnerRecordId = :GORID
+                AND GOR.owner.personId = :ownerId
+            """)
+    GameOwnerRecord findByRecordIdAndOwnerId(@Param("GORID") int GORID, @Param("ownerId") int ownerId);
 
 }

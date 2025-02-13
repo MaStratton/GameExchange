@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class ApplicationRestController {
 
+    
+        public static ApplicationKafkaProducer applicationKafkaProducer = new ApplicationKafkaProducer();
+
         @Autowired
         protected PersonJpaRepository personJpaRepository;
 
@@ -19,6 +22,7 @@ public class ApplicationRestController {
 
         @Autowired
         protected GameJpaRepository gameJpaRepository;
+
 
 
     public LinkedHashMap<String, String> mapMessage = new LinkedHashMap<String, String>();

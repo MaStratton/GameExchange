@@ -11,6 +11,7 @@ import org.GameExchange.ExchangeAPI.Model.OfferRecordJpaRepository;
 import org.GameExchange.ExchangeAPI.Model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -43,7 +44,6 @@ public class OfferRestController extends ApplicationRestController{
         }
 
         Person requestee = null;
-        System.out.println(offer.getRequesteeId());
         try{
             requestee = personJpaRepository.findById(offer.getRequesteeId()).get();
         } catch (Exception e){
@@ -53,6 +53,7 @@ public class OfferRestController extends ApplicationRestController{
         }
 
         Person requester = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
+        System.out.println(requester);
 
         if (requestee == null){
             mapMessage.put("UserDoesNotExist", "No User Exists by that Id");
@@ -63,9 +64,14 @@ public class OfferRestController extends ApplicationRestController{
             mapMessage.put("UserRequestingOwnGames", "Requestee and User are the same person");
             return ResponseEntity.status(400).body(getReturnMap());
         }
-        
+        System.out.println("HOW");
+        System.out.println("Requested: " + offer.getRequested());
+        System.out.println("Offered: " + offer.getOffered());
+        System.out.println("RequesteeId: " + offer.getRequesteeId());
         GameOwnerRecord[] requested = checkOwnership(offer.getRequested(), requestee.getPersonId());
+        System.out.println("why");
         GameOwnerRecord[] offered = checkOwnership(offer.getOffered(), requester.getPersonId());
+        System.out.println("TF");
 
         if (requested == null || offered == null){
             return ResponseEntity.status(400).body(getReturnMap());
@@ -75,6 +81,7 @@ public class OfferRestController extends ApplicationRestController{
 
         try{
             record = offerRecordJpaRepository.save(record);
+            applicationKafkaProducer.sendOfferCreated(requestee.getPersonId(), requestee.getPersonId());
             mapMessage.put("OfferRecordMade", "Offer Record Made");
         } catch (Exception e){
             System.out.println("Making New Offer Record Error: " +e.getMessage());
@@ -95,6 +102,7 @@ public class OfferRestController extends ApplicationRestController{
                 GOR.setOfferSender(requester);
                 gameOwnerRecordJpaRepository.save(GOR);
             }
+            applicationKafkaProducer.sendOfferCreated(requester.getPersonId(), requestee.getPersonId());
             return ResponseEntity.status(201).body(getReturnMap());
         } catch (Exception e){
             System.out.println("Updateing Games Error: " + e.getMessage());
@@ -130,7 +138,6 @@ public class OfferRestController extends ApplicationRestController{
                     recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwnerReceived(owner.getPersonId(), status);
                     break;
                 default:
-                    System.out.println("HIT BUT WRONG");
                     recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwner(owner.getPersonId(), status);
             }
         } else {
@@ -142,7 +149,6 @@ public class OfferRestController extends ApplicationRestController{
                     recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwnerReceived(owner.getPersonId());
                     break;
                 default:
-                    System.out.println("HIT");
                     recordsInOffers = gameOwnerRecordJpaRepository.findOffersByGameOwner(owner.getPersonId());
             }
         }
@@ -176,9 +182,14 @@ public class OfferRestController extends ApplicationRestController{
 
     public GameOwnerRecord[] checkOwnership(List<Integer> offer, int ownerId){
         GameOwnerRecord[] records = new GameOwnerRecord[offer.size()];
+        System.out.println(offer);
+        System.out.println(ownerId);
         for (int i = 0; i < offer.size(); i++){
+            System.out.println(i);
             try{ 
-                records[i] = gameOwnerRecordJpaRepository.findByGameOwnerRecordIdAndOwnerPersonId(offer.get(i), ownerId).get(0);
+                System.out.println("About to check ownership if " + offer.get(i) + "If owned by " + ownerId);
+                records[i] = gameOwnerRecordJpaRepository.findByRecordIdAndOwnerId(offer.get(i), ownerId);
+                System.out.println(i + "=" + records[i]);
                 if (records[i].isInOffer()){
                     mapMessage.put("RecordAlreadyPartOfOffer", "Game Owned By {localhost:8080/User/" + ownerId +"} Is Already Part of Another Offer. Game:" + records[i].getUri());
                     return null;
@@ -197,11 +208,15 @@ public class OfferRestController extends ApplicationRestController{
         Person sender = personJpaRepository.findByCreds(creds[0], creds[1]).get(0);
 
         List<GameOwnerRecord> recordsInOffers = gameOwnerRecordJpaRepository.findOfferBySender(sender.getPersonId());
+    
 
         if (recordsInOffers == null){
             mapMessage.put("NoOfferFound", " No Offer Found By That Id");
             return ResponseEntity.status(404).body(getReturnMap());
         }
+
+        Person requestee = gameOwnerRecordJpaRepository.findPersonByOfferIdAndOtherPersonId(id, sender.getPersonId());
+        System.out.println(requestee);
 
         for (GameOwnerRecord GOR: recordsInOffers){
             try {
@@ -215,6 +230,7 @@ public class OfferRestController extends ApplicationRestController{
                 return ResponseEntity.status(500).body(getReturnMap());
             }
         }
+        applicationKafkaProducer.sendOfferUpdated(sender.getPersonId(), requestee.getPersonId(), "deleted");
         mapMessage.put("DeleteSuccessful","Offer Record Deleted");
         return ResponseEntity.status(200).body(getReturnMap());
     }
@@ -240,12 +256,13 @@ public class OfferRestController extends ApplicationRestController{
             return ResponseEntity.status(404).body(getReturnMap());
         }
 
-        
+        Person sender = gameOwnerRecordJpaRepository.findPersonByOfferIdAndOtherPersonId(id, owner.getPersonId());
 
         try {
             OfferRecord offerRecord = recordsInOffers.get(0).getOfferRecord();
             offerRecord.setOfferStatus(decision);
             offerRecordJpaRepository.save(offerRecord);
+            applicationKafkaProducer.sendOfferUpdated(sender.getPersonId(), owner.getPersonId(), "deleted");
             mapMessage.put("Updated", "Record Updated");
             return ResponseEntity.status(204).body(getReturnMap());
         } catch (Exception e){

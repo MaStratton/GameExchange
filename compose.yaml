@@ -74,6 +74,8 @@ services:
       - "9092:9092"
     volumes:
       - "kafka_data:/bitnami"
+      - "./dockerConf/run-init-kafka-topics.sh:/docker-entrypoint-initdb.d/run-init-kafka-topics.sh:ro"
+      - "./dockerConf/init-kafka-topics.sh:/init-kafka-topics.sh:ro"
     environment:
       # KRaft settings
       - KAFKA_CFG_NODE_ID=0

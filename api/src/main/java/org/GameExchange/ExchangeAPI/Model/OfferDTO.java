@@ -34,11 +34,28 @@ public class OfferDTO {
         return offered;
     }
 
+    
+    public void setRequested(List<Integer> requested) {
+        this.requested = requested;
+    }
+
+
+    public void setOffered(List<Integer> offered) {
+        this.offered = offered;
+    }
+
+
+    public void setRequesteeId(int requesteeId) {
+        this.requesteeId = requesteeId;
+    }
+
+    
+
 
     @Override
     public String toString() {
         return "OfferDTO [requested=" + requested + ", offered=" + offered + ", requesteeId=" + requesteeId + "]";
     }
 
-    
+
 }

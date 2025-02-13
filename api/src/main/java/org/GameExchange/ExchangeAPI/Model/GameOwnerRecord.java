@@ -168,7 +168,7 @@ public class GameOwnerRecord implements Serializable{
             , gameOwnerRecordId, 
                 game.getGameTitle(),
                 gameSystem.getSystemName(),
-                condition.getConditionLabel(),
+                condition.getconditionName(),
                 (owner.getFirstName() + " " + owner.getLastName()));
 
         return strReturn;
@@ -190,7 +190,7 @@ public class GameOwnerRecord implements Serializable{
             , gameOwnerRecordId, 
                 game.getGameTitle(),
                 gameSystem.getSystemName(),
-                condition.getConditionLabel(),
+                condition.getconditionName(),
                 owner.getFirstName(),
                 isInOffer,
                 offerRecord.toString(),

@@ -15,22 +15,22 @@ public class Condition implements Serializable{
     @Column(name="conditionId")
     private int conditionId;
 
-    @Column(name="conditionLabel", nullable=false)
-    private String conditionLabel;
+    @Column(name="conditionName", nullable=false)
+    private String conditionName;
 
     public Condition() {
     }
 
-    public Condition(int conditionId, String conditionLabel) {
+    public Condition(int conditionId, String conditionName) {
         this.conditionId = conditionId;
-        this.conditionLabel = conditionLabel;
+        this.conditionName = conditionName;
     }
 
  
 
     @Override
     public String toString() {
-        return "Condition [conditionId=" + conditionId + ", conditionLabel=" + conditionLabel + "]";
+        return "Condition [conditionId=" + conditionId + ", conditionName=" + conditionName + "]";
     }
 
     public String getUri(){
@@ -41,8 +41,8 @@ public class Condition implements Serializable{
         return conditionId;
     }
 
-    public String getConditionLabel() {
-        return conditionLabel;
+    public String getconditionName() {
+        return conditionName;
     }
 }
 
