@@ -52,6 +52,29 @@ build/
 SetupAndDocumentation
 
 ### Node ###
+# Node.js
 ./emailServer/node_modules/
-./emailServer/node_modules/**
-./emailServer/node_modules/*
+
+# Logs
+./emailServer/logs
+./emailServer/*.log
+./emailServer/npm-debug.log*
+
+# Dependency directories
+./emailServer/pids
+./emailServer/logs
+./emailServer/*.pid
+./emailServer/*.seed
+./emailServer/*.pid.lock
+
+# Optional npm cache directory
+./emailServer/.npm
+
+# Optional eslint cache
+./emailServer/.eslintcache
+
+# Optional REPL history
+./emailServer/.node_repl_history
+
+# Environment variables
+./emailServer/.env*
