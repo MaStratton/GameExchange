@@ -42,6 +42,16 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
     networks:
       - game-network
+  emailserver:
+    image: email-server:latest
+    container_name: VideoGameEmailServer
+    build:
+      context: ./emailServer
+      dockerfile: Dockerfile.emailserver
+    depends_on:
+      - kafka
+    networks:
+      - game-network
   mysql:
     image: mysql:latest
     container_name: VideoGameDB
