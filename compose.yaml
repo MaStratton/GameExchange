@@ -50,6 +50,7 @@ services:
       dockerfile: Dockerfile.emailserver
     depends_on:
       - kafka
+      - mysql
     networks:
       - game-network
   mysql:
