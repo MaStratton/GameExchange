@@ -62,7 +62,8 @@ public class UserRestController extends ApplicationRestController{
             return ResponseEntity.status(400).body(getReturnMap());
         }
 
-        String[] addressInfo = new String[] {input.get("addressLine1"),
+        String[] addressInfo = new String[] {
+            input.get("addressLine1"),
             input.get("addressLine2"),
             input.get("cityName"),
             input.get("stateAbbr"),

@@ -47,7 +47,14 @@ const run = async () => {
 
             if (topic === "password_change") {
                 changePass(message.value.toString());
+            } else if (topic === "offer_created") {
+                offerCreated();
+            } else if (topic === "offer_updated") {
+                offerUpdated();
+            } else {
+                //console.log("Error. Invalid Topic");
             }
+            console.log(message.value);
         },
     });
 };
@@ -64,6 +71,10 @@ async function changePass(id){
         });
         console.log(`Message Sent: ${info.messageId}`);
     });
+
+}
+
+async function offerCreated(offerer, offeree){
 
 }
 

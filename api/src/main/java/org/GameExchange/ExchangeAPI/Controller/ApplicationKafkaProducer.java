@@ -35,32 +35,35 @@ public class ApplicationKafkaProducer {
 
     public void sendOfferCreated(int offerer, int offeree){
         try (Producer<String, HashMap<String, String>> producer = new KafkaProducer<>(props)){
-            String key = "Offer Created";
+            String key = "OfferCreated";
             Map<String, String> message = new HashMap<String, String>();
             message.put("Offerer", String.valueOf(offerer));
             message.put("Offeree", String.valueOf(offeree));
 
 
-            ProducerRecord<String, HashMap<String, String>> record = new ProducerRecord("offer_created", key, message);
+            ProducerRecord<String, HashMap<String, String>> record = new ProducerRecord("offer_created", key, message.toString());
 
             producer.send(record);
+            producer.close();
         }catch (Exception e){
             System.out.println("Unexpected Message Sender Exception: " + e.getMessage());
         }
 
     }
 
-    public void sendOfferUpdated(int offerer, int offeree, String Status){
+    public void sendOfferUpdated(int offerer, int offeree, String status){
         try (Producer<String, HashMap<String, String>> producer = new KafkaProducer<>(props)){
             String key = "Offer Created";
             Map<String, String> message = new HashMap<String, String>();
             message.put("Offerer", String.valueOf(offerer));
             message.put("Offeree", String.valueOf(offeree));
+            message.put("Status", status);
 
 
             ProducerRecord<String, HashMap<String, String>> record = new ProducerRecord("offer_created", key, message);
 
             producer.send(record);
+            producer.close();
         }catch (Exception e){
             System.out.println("Unexpected Message Sender Exception: " + e.getMessage());
         }
