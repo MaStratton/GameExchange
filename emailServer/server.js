@@ -40,21 +40,19 @@ const run = async () => {
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
             console.log({
-                value: message.value.toString(),
+                value: message.value.toString()
             });
             console.log(topic);
             console.log(message.value.toString());
-
             if (topic === "password_change") {
                 changePass(message.value.toString());
             } else if (topic === "offer_created") {
-                offerCreated();
+                offerCreated(message.value.toString());
             } else if (topic === "offer_updated") {
-                offerUpdated();
+                offerUpdated(message.value.toString());
             } else {
                 //console.log("Error. Invalid Topic");
             }
-            console.log(message.value);
         },
     });
 };
@@ -74,7 +72,36 @@ async function changePass(id){
 
 }
 
-async function offerCreated(offerer, offeree){
+async function offerUpdated(message){
+    var status = new RegExp("Status=.+?[,}]").exec(message).toString().split('=').pop().slice(0, -1);
+    var offerer = new RegExp("Offerer=.+?[,}]").exec(message).toString().split('=').pop().slice(0, -1);
+    var offeree = new RegExp("Offeree=.+?[,}]").exec(message).toString().split('=').pop().slice(0, -1);
+    console.log(offerer + " " + offeree + " " + status)
+    con.query(`SELECT personId, emailAddr From People WHERE personId = ${offerer} OR personId = ${offeree}`, (err, results, fields) => {
+        console.log(results);
+        const info = transporter.sendMail({
+            from: `"${name}" <${email}>`,
+            to:[ results[0].emailAddr.toString(), results[1].emailAddr.toString()],
+            subject: "Offer Updated",
+            text: `An Offer you are part of has been updated to ${status}ed`
+        });
+    })
+
+}
+
+async function offerCreated(message){
+    var offerer = new RegExp("Offerer=.+?[,}]").exec(message).toString().split('=').pop().slice(0, -1);
+    var offeree = new RegExp("Offeree=.+?[,}]").exec(message).toString().split('=').pop().slice(0, -1);
+    console.log(offerer + " " + offeree + " " + status)
+    con.query(`SELECT personId, emailAddr From People WHERE personId = ${offerer} OR personId = ${offeree}`, (err, results, fields) => {
+        console.log(results);
+        const info = transporter.sendMail({
+            from: `"${name}" <${email}>`,
+            to:[ results[0].emailAddr.toString(), results[1].emailAddr.toString()],
+            subject: "Offer Updated",
+            text: `An offer has been created using some games under your account`
+        });
+    })
 
 }
 
