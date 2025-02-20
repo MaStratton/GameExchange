@@ -37,8 +37,8 @@ public class ApplicationKafkaProducer {
         try (Producer<String, HashMap<String, String>> producer = new KafkaProducer<>(props)){
             String key = "OfferCreated";
             Map<String, String> message = new HashMap<String, String>();
-            message.put("Offerer", String.valueOf(offerer));
-            message.put("Offeree", String.valueOf(offeree));
+            message.put("Offerer", "\""+String.valueOf(offerer)+"\"");
+            message.put("Offeree", "\""+String.valueOf(offeree)+"\"");
 
 
             ProducerRecord<String, HashMap<String, String>> record = new ProducerRecord("offer_created", key, message.toString());
@@ -60,7 +60,7 @@ public class ApplicationKafkaProducer {
             message.put("Status", status);
 
 
-            ProducerRecord<String, HashMap<String, String>> record = new ProducerRecord("offer_created", key, message);
+            ProducerRecord<String, HashMap<String, String>> record = new ProducerRecord("offer_updated", key, message.toString());
 
             producer.send(record);
             producer.close();
