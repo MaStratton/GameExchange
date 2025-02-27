@@ -92,13 +92,14 @@ async function offerUpdated(message){
 async function offerCreated(message){
     var offerer = new RegExp("Offerer=.+?[,}]").exec(message).toString().split('=').pop().slice(0, -1);
     var offeree = new RegExp("Offeree=.+?[,}]").exec(message).toString().split('=').pop().slice(0, -1);
-    console.log(offerer + " " + offeree + " " + status)
+    var status = 
+    console.log(offerer + " " + offeree)
     con.query(`SELECT personId, emailAddr From People WHERE personId = ${offerer} OR personId = ${offeree}`, (err, results, fields) => {
         console.log(results);
         const info = transporter.sendMail({
             from: `"${name}" <${email}>`,
             to:[ results[0].emailAddr.toString(), results[1].emailAddr.toString()],
-            subject: "Offer Updated",
+            subject: "Offer Created",
             text: `An offer has been created using some games under your account`
         });
     })

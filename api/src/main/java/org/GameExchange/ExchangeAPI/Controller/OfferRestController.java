@@ -74,7 +74,6 @@ public class OfferRestController extends ApplicationRestController{
 
         try{
             record = offerRecordJpaRepository.save(record);
-            applicationKafkaProducer.sendOfferCreated(requestee.getPersonId(), requestee.getPersonId());
             mapMessage.put("OfferRecordMade", "Offer Record Made");
         } catch (Exception e){
             System.out.println("Making New Offer Record Error: " +e.getMessage());
@@ -258,7 +257,7 @@ public class OfferRestController extends ApplicationRestController{
         try {
             OfferRecord offerRecord = recordsInOffers.get(0).getOfferRecord();
             offerRecord.setOfferStatus(decision);
-//            offerRecordJpaRepository.save(offerRecord);
+            offerRecordJpaRepository.save(offerRecord);
             applicationKafkaProducer.sendOfferUpdated(sender.getPersonId(), owner.getPersonId(), decision);
             mapMessage.put("Updated", "Record Updated");
             return ResponseEntity.status(204).body(getReturnMap());
