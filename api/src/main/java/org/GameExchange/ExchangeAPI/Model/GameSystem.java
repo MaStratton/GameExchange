@@ -21,6 +21,10 @@ public class GameSystem {
         this.systemName = systemName;
     }
 
+    public GameSystem(String systemName){
+        this.systemName = systemName;
+    }
+
     public String getUri(){
         return "localhost:8080/Game/System/" + systemId;
     }

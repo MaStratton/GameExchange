@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 20s
+
+scrape_configs:
+  - job_name: 'API'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['VideoGameAPI1:8080', 'VideoGameAPI2:8080', 'VideoGameAPI3:8080']
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  #- job_name: 'EmailServer'
+  #  static_configs:
+  #    - targets: ['VideoGameEmailServer:8080']
+
+  #- job_name: 'Nginx'
+  #  static_configs:
+  #    - targets: ['VideoGameNginx:80']
+

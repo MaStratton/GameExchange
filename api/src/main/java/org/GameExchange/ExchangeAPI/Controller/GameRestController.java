@@ -16,6 +16,7 @@ import org.GameExchange.ExchangeAPI.Model.Game;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -227,15 +228,15 @@ public class GameRestController extends ApplicationRestController{
         return ResponseEntity.status(204).body(getReturnMap());
     }
 
-    @RequestMapping(path="/{id}", method=RequestMethod.GET)
-    public ResponseEntity<Object> findGameById(@PathVariable int id){
-        Game game = gameJpaRepository.findById(id).get();
-        if (game == null){
-            mapMessage.put("RecordNotFound", "No Record Found by that Id");
-            return ResponseEntity.status(404).body(getReturnMap());
-        }
-        return ResponseEntity.status(200).body(game.toMap());
-    }
+    //@RequestMapping(path="/{id}", method=RequestMethod.GET)
+    //public ResponseEntity<Object> findGameById(@PathVariable int id){
+    //    Game game = gameJpaRepository.findById(id).get();
+    //    if (game == null){
+    //        mapMessage.put("RecordNotFound", "No Record Found by that Id");
+    //        return ResponseEntity.status(404).body(getReturnMap());
+    //    }
+    //    return ResponseEntity.status(200).body(game.toMap());
+    //}
 
     @RequestMapping(path="/Publisher", method=RequestMethod.POST)
     public ResponseEntity<Object> addPublisher(@RequestBody HashMap<String, String> input){
@@ -272,6 +273,27 @@ public class GameRestController extends ApplicationRestController{
         } catch (IndexOutOfBoundsException e){
             mapMessage.put("PublisherNotFound", "No Publisher Found");
             return ResponseEntity.status(404).body(getReturnMap());
+        }
+    }
+
+    @RequestMapping(path="/System", method=RequestMethod.POST)
+    public ResponseEntity<Object> addSystem(@RequestBody HashMap<String, String> input){
+        String systemName = input.get("systemName");
+        if (systemName == null){
+            mapMessage.put("InvalidInput", "Please Enter a System Name");
+            return ResponseEntity.status(400).body(getReturnMap());
+        }
+
+        GameSystem system = new GameSystem(systemName);
+
+        try {
+            gameSystemJpaRepository.save(system);
+            mapMessage.put("InputSuccessful", "System Succesfully Created");
+            return ResponseEntity.status(201).body(getReturnMap());
+        } catch (Exception e) {
+            System.out.println("Error Adding System: " + e.getMessage());
+            mapMessage.put("Unexpexted Error", "Server Has Enocuntered an unexpected error");
+            return ResponseEntity.status(500).body(getReturnMap());
         }
     }
 

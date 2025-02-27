@@ -31,15 +31,51 @@ public class SecurityConfig {
         httpSecurity.addFilterBefore(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.authorizeHttpRequests(authorize -> authorize
+                //User Endpoints
                 .requestMatchers(HttpMethod.POST, "/User/Register").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/User").authenticated()
                 .requestMatchers(HttpMethod.PATCH, "/User").authenticated()
-                .requestMatchers(HttpMethod.POST, "/Game").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/User/ChangePass").authenticated()
+
+                //Game Endpoints
+                //Records
                 .requestMatchers(HttpMethod.GET, "/Game/Records").authenticated()
+                .requestMatchers(HttpMethod.POST, "/Game/Records").authenticated()
+
                 .requestMatchers(HttpMethod.GET, "/Game/Records/{id}").authenticated()
-                .requestMatchers(HttpMethod.GET, "/Game").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/Game/Records/{id}").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/Game/Records/{id}").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/Game/Records/{id}").authenticated()
+
+                //Games
+                .requestMatchers(HttpMethod.GET, "/Game/Games").authenticated()
+                .requestMatchers(HttpMethod.GET, "/Game/Games/{id}").authenticated()
+                .requestMatchers(HttpMethod.POST, "/Game/Games").authenticated()
+
+                //Publishers
+                .requestMatchers(HttpMethod.GET, "/Game/Publishers").authenticated()
+                .requestMatchers(HttpMethod.GET, "/Game/Publisher/{id}").authenticated()
+                .requestMatchers(HttpMethod.POST, "/Game/Publisher").authenticated()
+                
+                //Systems
+                .requestMatchers(HttpMethod.GET, "/Game/Systems").authenticated()
+                .requestMatchers(HttpMethod.GET, "Game/System/{id}").authenticated()    
+                .requestMatchers(HttpMethod.POST, "/Game/System").authenticated()
+
+                //Conditions
+                .requestMatchers(HttpMethod.GET, "/Game/Conditions").authenticated()
+                .requestMatchers(HttpMethod.GET, "/Game/Condition/{id}").authenticated()
+                
+
+                //Offer Endpoints
+                .requestMatchers(HttpMethod.POST, "/Offer").authenticated()
+                .requestMatchers(HttpMethod.GET, "/Offer").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/Offer/{id}/{decision}").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/Offer/{id").authenticated()
+
+                //Others
                 .requestMatchers("/error*").permitAll()
-                .anyRequest().authenticated()).httpBasic(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable);
+                .anyRequest().permitAll()).httpBasic(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable);
 
 
         httpSecurity.cors(cors -> cors.configurationSource(request -> {
