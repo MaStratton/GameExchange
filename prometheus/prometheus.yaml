@@ -1,5 +1,5 @@
 global:
-  scrape_interval: 20s
+  scrape_interval: 10s
 
 scrape_configs:
   - job_name: 'API'
@@ -10,7 +10,10 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-
+      
+  - job_name: 'kakfa'
+    static_configs:
+      - targets: ['VideoGameKafka:1099']
   #- job_name: 'EmailServer'
   #  static_configs:
   #    - targets: ['VideoGameEmailServer:8080']
