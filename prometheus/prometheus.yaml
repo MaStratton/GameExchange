@@ -15,4 +15,8 @@ scrape_configs:
     static_configs:
       - targets: ['VideoGameKafka:1099']
 
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['VideoGameNginxExporter:9113']
+
 
