@@ -14,11 +14,5 @@ scrape_configs:
   - job_name: 'kakfa'
     static_configs:
       - targets: ['VideoGameKafka:1099']
-  #- job_name: 'EmailServer'
-  #  static_configs:
-  #    - targets: ['VideoGameEmailServer:8080']
 
-  #- job_name: 'Nginx'
-  #  static_configs:
-  #    - targets: ['VideoGameNginx:80']
 
