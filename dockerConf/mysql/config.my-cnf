@@ -1,0 +1,6 @@
+    [client]
+    user = exporter
+    password = password
+    [client.servers]
+    user = exporter
+    password = password

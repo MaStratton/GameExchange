@@ -50,6 +50,13 @@ services:
       - api3
     networks:
       - game-network
+  telegraf:
+    image: telegraf:latest
+    container_name: VideoGameTelegraf
+    volumes:
+      - ./dockerConf/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+    networks:
+      - game-network
   nginx_prometheus_exporter:
     image: nginx/nginx-prometheus-exporter:latest
     container_name: VideoGameNginxExporter
@@ -82,6 +89,14 @@ services:
       - game-network
     volumes:
       - VideoGameDBVolume:/var/lib/mysql
+  mysql-exporter:
+    image: prom/mysqld-exporter
+    container_name: VideoGameMySQLExporter
+    volumes:
+      - ./dockerConf/mysql/config.my-cnf:/cfg/config.my-cnf
+    command: "--config.my-cnf=/cfg/config.my-cnf"
+    networks:
+      - game-network
   kafka:
     image: bitnami/kafka
     container_name: VideoGameKafka
