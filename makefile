@@ -1,7 +1,9 @@
-SUBDIR = api
+APIDIR = api
+EMAILDIR = emailServer
 
 all:
-	$(MAKE) -C $(SUBDIR)
+	$(MAKE) -C $(APIDIR)
+	$(MAKE) -C $(EMAILDIR)
 	
 	docker compose up --build -d
 
