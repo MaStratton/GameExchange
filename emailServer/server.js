@@ -18,6 +18,36 @@ var con = mysql.createConnection({
     database: "VideoGameExchange"
 });
 
+//Express/Metrics Setup
+const express = require('express');
+const EPORT = 3000;
+const server = express();
+server.use(express.json());
+server.use(express.urlencoded());
+
+const client = require('prom-client');
+const register = new client.Registry();
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics({register});
+
+const changePassCounter = new client.Counter({
+  name: "change_pass_counter",
+  help: "number of password change requests emails sent"
+});
+
+const offerCreatedCounter = new client.Counter({
+  name: "offer_created_counter",
+  help: "number of offer creation emails sent"
+});
+
+const offerUpdatedCounter = new client.Counter({
+  name: "offer_updated_counter",
+  help: "number of offer updated emails sent"
+});
+
+register.registerMetric(changePassCounter);
+register.registerMetric(offerCreatedCounter);
+register.registerMetric(offerUpdatedCounter);
 
 //Email Spoofer
 const nodemailer = require("nodemailer");
@@ -45,11 +75,15 @@ const run = async () => {
             console.log(topic);
             console.log(message.value.toString());
             if (topic === "password_change") {
-                changePass(message.value.toString());
+              changePassCounter.inc();
+              changePass(message.value.toString());
+                
             } else if (topic === "offer_created") {
-                offerCreated(message.value.toString());
+              offerUpdatedCounter.inc();
+              offerCreated(message.value.toString());
             } else if (topic === "offer_updated") {
-                offerUpdated(message.value.toString());
+              offerCreatedCounter.inc();
+              offerUpdated(message.value.toString());
             } else {
                 //console.log("Error. Invalid Topic");
             }
@@ -106,6 +140,14 @@ async function offerCreated(message){
 
 }
 
-
+server.get('/metrics', async (req, res) => {
+  res.setHeader("Content-Type", client.register.contentType);
+    let metrics = await register.metrics();
+    res.send(metrics);
+});
 
 run().catch(console.error);
+server.listen(EPORT, (err) => {
+    if (err) console.log(err);
+    console.log(`Express/Metrics Listening on http://localhost:${EPORT}`);
+});
