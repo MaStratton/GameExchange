@@ -74,7 +74,6 @@ services:
     depends_on:
       - kafka
       - mysql
-    restart: on-failure
     networks:
       - game-network
   mysql:
